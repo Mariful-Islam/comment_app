@@ -1,15 +1,30 @@
 // hooks/useAuth.ts
 import { useEffect, useState } from 'react'
+import { onAuthStateChanged, User } from "firebase/auth"
+import { auth } from "../lib/firebase"
 
 export function useAuth() {
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    const token = localStorage.getItem('token') // or use cookies
-    setIsAuthenticated(!!token)
-    setIsLoading(false)
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser)
+      setIsLoading(false)
+    })
+
+    return () => unsubscribe()
+
+
   }, [])
 
-  return { isAuthenticated, isLoading }
+
+  const token = localStorage.getItem('token') 
+
+  return {
+    user,
+    isAuthenticated: !!user || !!token,
+    isLoading,
+  }
 }
+      

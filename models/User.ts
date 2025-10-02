@@ -2,14 +2,22 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
+  name?: string;
   email: string;
   password: string;
+  imageUrl?: string;
+  authProvider: "email" | "google" | "facebook";
+
 }
 
 const userSchema = new Schema<IUser>(
   {
+    name: { type: String },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    imageUrl: { type: String },
+    authProvider: { type: String, enum: ["email", "google", "facebook"], default: "email" },
+
   },
   { timestamps: true }
 );

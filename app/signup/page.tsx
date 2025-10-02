@@ -46,7 +46,7 @@ function Signup() {
 
       } else {
         toast("Event has been created.");
-        toast.error("Account created unsuccessful...")
+        toast.error(data?.error || "Signup unsuccessful...");
 
       }
     } catch (error) {

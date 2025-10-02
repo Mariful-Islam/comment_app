@@ -13,7 +13,7 @@ export function withAuth(Component: React.FC) {
       if (!isLoading && !isAuthenticated) {
         router.replace('/login')
       }
-    }, [isLoading, isAuthenticated])
+    }, [isLoading, isAuthenticated, router])
 
     if (isLoading || !isAuthenticated) return null
 

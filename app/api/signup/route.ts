@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { name, email, password, imageUrl, authProvider } = await req.json();
 
     if (!email || !password) {
       return Response.json({ error: 'Email and password are required' }, { status: 400 });
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({ email, password: hashedPassword });
+    const newUser = await User.create({ name, email, password: hashedPassword, imageUrl, authProvider });
 
     return Response.json({ message: 'User created', userId: newUser._id }, { status: 201 });
   } catch (error) {
