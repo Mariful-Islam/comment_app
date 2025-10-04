@@ -7,6 +7,7 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type UserType = {
   name: string;
@@ -28,14 +29,14 @@ function Home() {
         const res = await fetch("/api/user" + `?email=${email}`);
 
         if (!res.ok) {
-          console.error("Failed to fetch user");
+          toast.error("Failed to fetch user data. Please try again.");
           return;
         }
 
         const data = await res.json();
         setUser(data);
       } catch (error) {
-        console.error("Error fetching user:", error);
+        toast.error("An error occurred while fetching user data.");
       }
     };
 

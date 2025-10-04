@@ -1,20 +1,24 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { toast } from "sonner";
-import { FaGoogle } from "react-icons/fa6";
+import { FaFacebook, FaGoogle } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, provider } from "@/lib/firebase";
+import { Eye, EyeOff } from "lucide-react";
+
+
 
 function Login() {
   const [form, setForm] = React.useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
@@ -33,8 +37,6 @@ function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  console.log("Form data:", form);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -48,6 +50,7 @@ function Login() {
       });
 
       const data = await res.json();
+      console.log("Login response data:", data);
 
       if (res.ok) {
         localStorage.setItem("token", data?.token);
@@ -59,10 +62,9 @@ function Login() {
         router.refresh();
         router.replace("/");
       } else {
-        toast.error("Login unsuccessful...");
+        toast.error(data?.error || "Login unsuccessful...");
       }
     } catch (error) {
-      console.error("Error during signup:", error);
       toast.error("Error during Login:");
     } finally {
       setLoading(false);
@@ -84,14 +86,9 @@ function Login() {
         authProvider: "google",
       };
 
-      console.log("Google user data:", userData);
-
       const isUserExist = await fetch("/api/user" + `?email=${userData.email}`);
 
-      console.log("Is user exist:", isUserExist);
-
       if (!isUserExist) {
-
         const res = await fetch("/api/signup", {
           method: "POST",
           headers: {
@@ -108,7 +105,6 @@ function Login() {
         const responseData = await res.json(); // You can use this data as needed
       }
 
-      
       // Save token and email to localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("email", userData.email);
@@ -117,19 +113,56 @@ function Login() {
       router.refresh();
       router.replace("/");
     } catch (error) {
-      console.error("Google Sign-in Error:", error);
       toast.error("Failed to sign in with Google. Please try again.");
     }
   };
 
   const handleFacebookLogin = async () => {
     try {
+
       const result = await signInWithPopup(auth, facebookProvider);
+      console.log("Facebook login result:", result);
       const user = result?.user;
-      console.log("Facebook user:", user);
-      // You can send the token to your backend here
+
+      const token = await user.getIdToken();
+      
+
+      const userData = {
+        name: user.displayName || "",
+        email: user.email || "",
+        password: token, // Using token as password for backend auth
+        imageUrl: user.photoURL || "",
+        authProvider: "facebook",
+      };
+
+      const isUserExist = await fetch("/api/user" + `?email=${userData.email}`);
+
+      if (!isUserExist) {
+        const res = await fetch("/api/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Server responded with ${res.status}: ${errorText}`);
+        }
+
+        const responseData = await res.json(); // You can use this data as needed
+      }
+
+      // Save token and email to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("email", userData.email);
+
+      toast.success("Successfully logged in!");
+      router.refresh();
+      router.replace("/");
     } catch (error) {
-      console.error("Facebook login error:", error);
+      toast.error("Failed to sign in with Facebook. Please try again.");
     }
   };
 
@@ -155,14 +188,30 @@ function Login() {
 
           <div className="grid w-full max-w-sm items-center gap-3">
             <Label htmlFor="password">Password</Label>
-            <Input
-              type="password"
-              id="password"
-              placeholder="Password"
-              name="password"
-              value={form?.password || ""}
-              onChange={handleChange}
-            />
+
+            <div className="relative flex items-center">
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                placeholder="Password"
+                name="password"
+                value={form?.password || ""}
+                onChange={handleChange}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-1/2 -translate-y-1/2"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <Button
@@ -193,23 +242,11 @@ function Login() {
           className="border border-gray-300 bg-white  text-gray-500 p-2 rounded hover:bg-gray-200 flex items-center justify-center gap-2"
           onClick={handleFacebookLogin}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-4 h-4"
-          >
-            <path
-              fillRule="evenodd"
-              d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54v-2.89h2.54v-2.203c0-2.506 1.492-3.89 3.777-3.89  
-1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.876h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12c0-5.523-4.477-10-10-10z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <FaFacebook />
           Sign Up with Facebook
         </Button>
 
-        <p className="text-sm text-gray-600 flex justify-center gap-3">
+        <div className="text-sm text-gray-600 flex justify-center gap-3">
           Not an account ?
           <Link
             href="/signup"
@@ -217,7 +254,7 @@ function Login() {
           >
             Sign Up
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

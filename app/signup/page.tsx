@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,14 +9,14 @@ import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { toast } from "sonner";
 import { FaGoogle } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-
-
+import { Eye, EyeOff } from "lucide-react";
 
 function Signup() {
   const [form, setForm] = React.useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = React.useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,26 +31,24 @@ function Signup() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({...form, name: form?.email?.split('@')[0]}),
       });
 
       const data = await res.json();
 
       if (res.ok) {
         setForm({ email: "", password: "" });
-        localStorage.setItem("token", data?.token)
+        
+        localStorage.setItem("email", form?.email || "");
 
-        toast.success("Account created successfully...")
+        toast.success("Account created successfully...");
 
-        router.push('/login')
-
+        router.push("/login");
       } else {
         toast("Event has been created.");
         toast.error(data?.error || "Signup unsuccessful...");
-
       }
     } catch (error) {
-      console.error("Error during signup:", error);
       toast.error("Error during signup:");
     } finally {
       setLoading(false);
@@ -79,15 +77,30 @@ function Signup() {
 
           <div className="grid w-full max-w-sm items-center gap-3">
             <Label htmlFor="password">Password</Label>
-            <div></div>
-            <Input
-              type="password"
-              id="password"
-              placeholder="Password"
-              name="password"
-              value={form?.password || ""}
-              onChange={handleChange}
-            />
+
+            <div className="relative flex items-center">
+              <Input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Password"
+                name="password"
+                value={form?.password || ""}
+                onChange={handleChange}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-1/2 -translate-y-1/2"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <Button
@@ -111,7 +124,6 @@ function Signup() {
           <FaGoogle />
           Sign Up with Google
         </Button>
-
 
         <p className="text-sm text-gray-600 flex justify-center gap-3">
           Already have an account ?
