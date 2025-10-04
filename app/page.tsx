@@ -35,6 +35,7 @@ function Home() {
 
         const data = await res.json();
         setUser(data);
+        router.refresh();
       } catch (error) {
         toast.error("An error occurred while fetching user data.");
       }
