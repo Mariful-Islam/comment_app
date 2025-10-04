@@ -1,10 +1,12 @@
+import { connectToDB } from '@/lib/mongodb';
 import { User } from '@/models/User';
 import { NextRequest, NextResponse } from 'next/server';
-import { use } from 'react';
 
 // Mock user data for demonstration purposes
 
 export async function GET(req: NextRequest) {
+    await connectToDB();
+
     const { searchParams } = new URL(req.url);
     const email = searchParams.get('email');
     console.log("Email from GET request:", email);

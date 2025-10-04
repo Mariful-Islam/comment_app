@@ -103,15 +103,23 @@ function Login() {
         }
 
         const responseData = await res.json(); // You can use this data as needed
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", userData.email);
+
+        toast.success("Successfully logged in!");
+        router.refresh();
+        router.replace("/");
+        
+      }else {
+
+        // Save token and email to localStorage
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", userData.email);
+
+        toast.success("Successfully logged in!");
+        router.refresh();
+        router.replace("/");
       }
-
-      // Save token and email to localStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("email", userData.email);
-
-      toast.success("Successfully logged in!");
-      router.refresh();
-      router.replace("/");
     } catch (error) {
       toast.error("Failed to sign in with Google. Please try again.");
     }
