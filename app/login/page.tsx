@@ -13,7 +13,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, provider } from "@/lib/firebase";
 import { Eye, EyeOff } from "lucide-react";
-
+import { useUser } from "@/contexts/UserContext";
+import googleLogo from "@/assets/google-logo.png"
+import Image from "next/image";
 
 
 function Login() {
@@ -24,6 +26,9 @@ function Login() {
   const router = useRouter();
 
   const { isAuthenticated, isLoading } = useAuth();
+
+  const { fetchUser } = useUser();
+
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -86,9 +91,10 @@ function Login() {
         authProvider: "google",
       };
 
-      const isUserExist = await fetch("/api/user" + `?email=${userData.email}`);
+      const res = await fetch(`/api/user?email=${userData.email}`);
+      const data = await res.json();
 
-      if (!isUserExist) {
+      if (data?.error === "User not found") {
         const res = await fetch("/api/signup", {
           method: "POST",
           headers: {
@@ -103,6 +109,12 @@ function Login() {
         }
 
         const responseData = await res.json(); // You can use this data as needed
+
+        if(responseData){
+          await fetchUser();
+        }
+
+
         localStorage.setItem("token", token);
         localStorage.setItem("email", userData.email);
 
@@ -193,7 +205,8 @@ function Login() {
           className="border border-gray-300 bg-white  text-gray-500 p-2 rounded hover:bg-gray-200 flex items-center justify-center gap-2"
           onClick={handleSignIn}
         >
-          <FaGoogle />
+          <Image src={require('@/assets/google-logo.png')} alt="Google Logo" className="w-4 h-4" />
+
           Sign Up with Google
         </Button>
 

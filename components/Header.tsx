@@ -27,6 +27,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 function Header() {
   const router = useRouter();
@@ -152,10 +153,12 @@ function Header() {
                 </div>
               ) : (
                 <div className="flex gap-2 items-center">
-                  <img
-                    src={user?.imageUrl}
+                  <Image
+                    src={user?.imageUrl || ""}
                     alt=""
                     className="bg-slate-400 rounded-full max-w-8 min-w-8 h-8 "
+                    width={32}
+                    height={32}
                   />
                   <div className="text-base font-bold text-nowrap hidden sm:block">
                     {user?.name}

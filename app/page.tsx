@@ -20,7 +20,7 @@ type UserType = {
 function Home() {
   const router = useRouter();
   const { user, loading } = useUser();
-  
+
 
 
 

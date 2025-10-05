@@ -3,10 +3,12 @@ import { useUser } from "@/contexts/UserContext";
 import Layout from "@/layout/Layout";
 import Image from "next/image";
 import React from "react";
+import { FaUser } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 
 function Profile() {
   const { user, loading } = useUser();
+  
   return (
     <Layout>
       <div className="mt-5 border border-gray-200 rounded-xl shadow-sm p-6 mx-6 flex flex-col items-start transition hover:shadow-md">
@@ -22,11 +24,20 @@ function Profile() {
           <>
             <h1 className="text-xl font-bold mb-4">Profile</h1>
             <div>
-              <img
-                src={user.imageUrl || "https://via.placeholder.com/150"}
+              {user?.imageUrl ? (
+              <Image
+                src={user.imageUrl}
                 alt="Profile Picture"
                 className="w-24 h-24 rounded-full mb-4 object-cover"
-              />
+                width={96}
+                height={96}
+                
+                
+              />) : (
+                <div className="w-24 h-24 rounded-full mb-4 bg-gray-200 flex items-center justify-center">
+                  <FaUser className="h-12 w-12 text-gray-400" />
+                </div>
+              )}
             </div>
             <div className="text-base font-medium mb-2 ">
               {user.name || "N/A"}
@@ -47,27 +58,25 @@ function Profile() {
       <div className="mt-5 border border-gray-200 rounded-xl shadow-sm p-6 mx-6 flex flex-col items-start transition hover:shadow-md">
         <h1 className="text-xl font-bold mb-4">Connected Account</h1>
         <div className="text-base font-medium mb-2 flex items-center gap-8">
-          {user?.authProvider
-            ? user.authProvider === "google" && (
-                  <Image
-                    src={require("@/assets/google-logo.png")}
-                    alt=""
-                    className="h-10 w-10 object-cover"
-                    
-                  />
-            ) : user?.authProvider === "facebook" ? (
-
-                  <Image
-                    src={require("@/assets/facebook.png")}
-                    alt=""
-                    className="h-10 w-10 object-cover"
-                  />
-            ) : user?.authProvider === "email" ? (
-                <>
-                  <MdEmail className="h-10 w-10" />
-                </>
-              )
-            : "N/A"}
+          {user?.authProvider === "google" ? (
+            <Image
+              src={require("@/assets/google-logo.png")}
+              alt=""
+              className="h-10 w-10 object-cover"
+            />
+          ) : user?.authProvider === "facebook" ? (
+            <Image
+              src={require("@/assets/facebook.png")}
+              alt=""
+              className="h-10 w-10 object-cover"
+            />
+          ) : user?.authProvider === "email" ? (
+            <>
+              <MdEmail className="h-10 w-10" />
+            </>
+          ) : (
+            "N/A"
+          )}
         </div>
       </div>
     </Layout>
