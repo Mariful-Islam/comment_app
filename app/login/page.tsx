@@ -125,54 +125,6 @@ function Login() {
     }
   };
 
-  const handleFacebookLogin = async () => {
-    try {
-
-      const result = await signInWithPopup(auth, facebookProvider);
-      console.log("Facebook login result:", result);
-      const user = result?.user;
-
-      const token = await user.getIdToken();
-      
-
-      const userData = {
-        name: user.displayName || "",
-        email: user.email || "",
-        password: token, // Using token as password for backend auth
-        imageUrl: user.photoURL || "",
-        authProvider: "facebook",
-      };
-
-      const isUserExist = await fetch("/api/user" + `?email=${userData.email}`);
-
-      if (!isUserExist) {
-        const res = await fetch("/api/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Server responded with ${res.status}: ${errorText}`);
-        }
-
-        const responseData = await res.json(); // You can use this data as needed
-      }
-
-      // Save token and email to localStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("email", userData.email);
-
-      toast.success("Successfully logged in!");
-      router.refresh();
-      router.replace("/");
-    } catch (error) {
-      toast.error("Failed to sign in with Facebook. Please try again.");
-    }
-  };
 
   return (
     <div className="flex justify-center items-center h-screen w-screen">
@@ -245,14 +197,7 @@ function Login() {
           Sign Up with Google
         </Button>
 
-        <Button
-          type="button"
-          className="border border-gray-300 bg-white  text-gray-500 p-2 rounded hover:bg-gray-200 flex items-center justify-center gap-2"
-          onClick={handleFacebookLogin}
-        >
-          <FaFacebook />
-          Sign Up with Facebook
-        </Button>
+
 
         <div className="text-sm text-gray-600 flex justify-center gap-3">
           Not an account ?
