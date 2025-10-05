@@ -5,7 +5,40 @@
 @tailwind utilities;
 
 
+@theme {
+    --breakpoint-xs: 430px;
+    --breakpoint-mh: 860px;
+    --breakpoint-ml: 950px;
+  }
+
 @custom-variant dark (&:is(.dark *));
+
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+  border-top: 2px solid #d1d1d1; /* Change the color to your preference */
+  border-radius: 50%;
+  animation: spin 500ms linear infinite;
+
+}
+
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
 
 @theme inline {
   --color-background: var(--background);

@@ -1,0 +1,31 @@
+"use client";
+
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+import { GlobalContext } from "@/contexts/GlobalContext";
+import React, { useContext } from "react";
+
+function Layout({ children }: { children: React.ReactNode }) {
+  const { openHeaderSidebar, toggleHeaderSidebar } = useContext(GlobalContext);
+
+  return (
+    <div className="flex gap-0 w-full text-black dark:text-white ">
+      <Sidebar />
+
+      <div className="w-full">
+        <Header />
+        <div
+          className={` p-3 overflow-auto ${
+            openHeaderSidebar
+              ? "ml-0 mh:ml-[250px] blur-md mh:blur-none"
+              : "ml-0 mh:ml-12"
+          } duration-200`}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Layout;
