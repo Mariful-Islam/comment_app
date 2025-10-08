@@ -2,11 +2,12 @@
 import { Button } from "@/components/ui/button";
 import Layout from "@/layout/Layout";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 
 function Posts() {
   const { pageId } = useParams();
+  const router = useRouter()
 
   const posts = [
     { id: 1, content: "Post 1" },
@@ -21,9 +22,9 @@ function Posts() {
   return (
     <Layout>
       <div className="px-6 mt-5">
-        <h1 className="text-2xl font-bold mb-2">Posts of {pageId}</h1>
+        <h1 className="text-xl font-bold mb-2">Posts of {pageId}</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-5 ">
           {posts.map((post) => (
             <div
               key={post.id}
@@ -33,7 +34,7 @@ function Posts() {
               <div className="p-4 ">
                 <div className="font-medium">{post.content}</div>
                 <div className="flex justify-end items-center mt-4">
-                  <Button onClick={()=>null}>View</Button>
+                  <Button onClick={()=>router.push(`/dashboard/facebook-comments/${post.id}`)}>View</Button>
                 </div>
                 
               </div>

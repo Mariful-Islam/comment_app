@@ -1,5 +1,4 @@
 "use client";
-import { DataTableDemo } from "@/components/Table";
 import Layout from "@/layout/Layout";
 import React, { use } from "react";
 import Image from "next/image";
@@ -23,10 +22,10 @@ function Pages() {
 
   return (
     <Layout>
-      <div className="px-6 mt-5">
-        <h1 className="text-2xl font-bold mb-4">Facebook Pages</h1>
+      <div className=" mt-5">
+        <h1 className="text-xl font-bold mb-4">Facebook Pages</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-5">
           {pageList.map((page) => (
             <div
               key={page.id}

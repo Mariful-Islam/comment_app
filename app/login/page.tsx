@@ -7,14 +7,12 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { toast } from "sonner";
-import { FaFacebook, FaGoogle } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, provider } from "@/lib/firebase";
 import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
-import googleLogo from "@/assets/google-logo.png"
 import Image from "next/image";
 
 
@@ -136,6 +134,9 @@ function Login() {
       toast.error("Failed to sign in with Google. Please try again.");
     }
   };
+
+
+
 
 
   return (

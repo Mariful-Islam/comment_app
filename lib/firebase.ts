@@ -15,6 +15,7 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
-facebookProvider.addScope('email');
+// facebookProvider.addScope('email');
+// facebookProvider.addScope('public_profile');
 
 export { auth, provider, facebookProvider };

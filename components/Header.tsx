@@ -154,7 +154,7 @@ function Header() {
               ) : (
                 <div className="flex gap-2 items-center">
                   <Image
-                    src={user?.imageUrl || ""}
+                    src={user?.imageUrl || require("../assets/Untitled-design--32-.png")}
                     alt=""
                     className="bg-slate-400 rounded-full max-w-8 min-w-8 h-8 "
                     width={32}

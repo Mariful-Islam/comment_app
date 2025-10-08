@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+"use client"
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -6,6 +6,7 @@ import GlobalProvider, { GlobalContext } from "@/contexts/GlobalContext";
 
 import { UserProvider } from "@/contexts/UserContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,10 +18,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Comment Automation App",
-  description: "Comment Automation App by Mariful Islam Saad",
-};
+
 
 export default function RootLayout({
   children,
@@ -35,9 +33,11 @@ export default function RootLayout({
         <ThemeProvider>
           <GlobalProvider>
             <UserProvider>
-              {children}
+              <SessionProvider>
+                {children}
 
-              <Toaster />
+                <Toaster />
+              </SessionProvider>
             </UserProvider>
           </GlobalProvider>
         </ThemeProvider>

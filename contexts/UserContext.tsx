@@ -16,7 +16,7 @@ type UserContextType = {
   user: UserType | null;
   setUser: (user: UserType | null) => void;
   loading: boolean;
-  fetchUser: () => void ;
+  fetchUser: () => void;
 };
 
 const UserContext = createContext<UserContextType>({
@@ -32,34 +32,38 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
   const fetchUser = async () => {
-      const email = localStorage.getItem("email");
-      if (!email) {
+    const email = localStorage.getItem("email");
+    if (!email) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/user?email=${email}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-cache",
+      });
+      if (!res.ok) {
+        toast.error("Failed to fetch user data.");
         setLoading(false);
         return;
       }
 
-      try {
-        const res = await fetch(`/api/user?email=${email}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-cache",
-        });
-        if (!res.ok) {
-          toast.error("Failed to fetch user data.");
-          setLoading(false);
-          return;
-        }
+      const data = await res.json();
+      setUser(data);
+    } catch (err) {
+      toast.error("Error fetching user.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        const data = await res.json();
-        setUser(data);
-      } catch (err) {
-        toast.error("Error fetching user.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchFacebookConnection = async () => {
+    const res = await fetch(`/api/facebook`)
+  }
 
   useEffect(() => {
     fetchUser();
