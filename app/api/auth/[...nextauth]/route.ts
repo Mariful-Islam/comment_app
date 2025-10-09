@@ -3,6 +3,7 @@ import FacebookProvider from "next-auth/providers/facebook";
 
 
 const authOptions: NextAuthOptions = {
+  debug: true,
   pages: {
     signIn: "/login",
   },
@@ -24,7 +25,10 @@ const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken;
       return session;
     },
+  
   },
+
+  secret: process.env.NEXTAUTH_SECRET
 
 };
 
