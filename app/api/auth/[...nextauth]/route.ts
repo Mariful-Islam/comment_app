@@ -3,7 +3,7 @@ import FacebookProvider from "next-auth/providers/facebook";
 
 
 const authOptions: NextAuthOptions = {
-  debug: true,
+  debug: process.env.NODE_ENV !== 'production',
   pages: {
     signIn: "/login",
   },
@@ -28,7 +28,8 @@ const authOptions: NextAuthOptions = {
   
   },
 
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
+  
 
 };
 
