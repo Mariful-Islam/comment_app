@@ -102,11 +102,11 @@ function Sidebar() {
         }`}
       >
         <Link
-          href={`/store-settings/profile`}
+          href={`/dashboard/settings`}
           className={`flex items-center gap-2 ${
             openHeaderSidebar ? "px-4" : " justify-center px-1"
           } ${
-            pathname === "/store-settings" ? "text-blue-500" : ""
+            pathname === "/dashboard/settings" ? "text-blue-500" : ""
           } py-2 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-blue-500 hover:text-blue-500 rounded-md font-bold duration-200`}
           data-tooltip-id={`setting`}
           data-tooltip-content={`Setting`}
