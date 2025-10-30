@@ -39,7 +39,7 @@ function Home() {
 
   return (
     <Layout>
-      <div className="mt-4">
+      <div className="max-w-[1200px] mx-auto mt-4">
         <div className="flex flex-col gap-4">
           {loading ? (
             <div className="animate-pulse flex flex-col gap-2 ">

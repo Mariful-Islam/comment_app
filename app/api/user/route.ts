@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const email = searchParams.get('email');
-    console.log("Email from GET request:", email);
+    
 
     if (!email) {
         return NextResponse.json({ error: 'Email parameter is required' }, { status: 400 });

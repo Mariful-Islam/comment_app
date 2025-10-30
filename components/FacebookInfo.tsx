@@ -12,7 +12,6 @@ function FacebookInfo() {
 
   useEffect(() => {
     if (session) {
-      console.log("User session after Facebook login:", session);
 
       localStorage.setItem("facebookAccessToken", session?.accessToken);
 
