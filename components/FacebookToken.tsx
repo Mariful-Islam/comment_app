@@ -52,7 +52,7 @@ function FacebookToken() {
             name: session.user.name,
             email: session.user.email,
             image: session.user.image,
-            // expires: session.expires,
+            expires: 1800,
             accessToken: session?.accessToken,
           }),
         });

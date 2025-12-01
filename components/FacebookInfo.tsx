@@ -24,7 +24,7 @@ function FacebookInfo() {
           name: user.name,
           email: user.email,
           image: user.picture?.data?.url,
-          // expire,
+          expires: 1800,
           accessToken: token,
         }),
       })
@@ -83,6 +83,8 @@ function FacebookInfo() {
       "pages_show_list,pages_read_engagement,pages_manage_posts"
     );
     fbAuthUrl.searchParams.set("response_type", "code");
+
+  
 
 
     try {
