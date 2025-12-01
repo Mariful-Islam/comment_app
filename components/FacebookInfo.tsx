@@ -1,19 +1,18 @@
-"use client";
 
-import { signIn, useSession, signOut as NextSignOut } from "next-auth/react";
-import React, { useEffect } from "react";
+import { signIn, signOut as NextSignOut } from "next-auth/react";
+import React, { use, useEffect } from "react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useFacebook } from "@/contexts/FacebookContext";
 
 function FacebookInfo() {
   const router = useRouter();
-  const { data: session }: any = useSession();
+  const { user, token, setUser, setToken } = useFacebook();
 
   useEffect(() => {
-    if (session) {
-
-      localStorage.setItem("facebookAccessToken", session?.accessToken);
+    if (user && token) {
+      localStorage.setItem("facebookAccessToken", token);
 
       fetch(`/api/facebook`, {
         method: "POST",
@@ -21,69 +20,104 @@ function FacebookInfo() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userEmail: localStorage.getItem('email'),
-          name: session.user.name,
-          email: session.user.email,
-          image: session.user.image,
-          expires: session.expires,
-          accessToken: session?.accessToken,
+          userEmail: localStorage.getItem("email"),
+          name: user.name,
+          email: user.email,
+          image: user.picture?.data?.url,
+          // expire,
+          accessToken: token,
         }),
       })
         .then((res) => {
           const data: any = res.json();
-          toast.success('Connected with your facebook account !');
+          toast.success("Connected with your facebook account !");
         })
         .catch(() => toast.error("Failed to save data !"));
     }
-  }, [session]);
+  }, [user && token]);
+
+  // const handleFacebookLoginOld = async () => {
+  //   try {
+  //     const result: any = await signIn("facebook");
+
+  //     if (user && token) {
+  //       localStorage.setItem("facebookAccessToken", token);
+
+  //       const res = await fetch(`/api/facebook`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           userEmail: localStorage.getItem("email"),
+  //           name: session.user.name,
+  //           email: session.user.email,
+  //           image: session.user.image,
+  //           expires: session.expires,
+  //           accessToken: session?.accessToken,
+  //         }),
+  //       });
+
+  //       const data = await res.json();
+  //       toast.success(data?.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Facebook login error:", error);
+  //     toast.error("Failed to sign in with Facebook. Please try again.");
+  //   }
+  // };
 
   const handleFacebookLogin = async () => {
+    const fbAuthUrl = new URL("https://www.facebook.com/v23.0/dialog/oauth");
+
+    fbAuthUrl.searchParams.set(
+      "client_id",
+      process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID!
+    );
+    fbAuthUrl.searchParams.set(
+      "redirect_uri",
+      process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI!
+    );
+    fbAuthUrl.searchParams.set(
+      "scope",
+      "pages_show_list,pages_read_engagement,pages_manage_posts"
+    );
+    fbAuthUrl.searchParams.set("response_type", "code");
+
+
     try {
-      const result: any = await signIn("facebook");
+      window.location.href = fbAuthUrl.toString();
 
-      if (session) {
-        localStorage.setItem("facebookAccessToken", session?.accessToken);
-
-        const res = await fetch(`/api/facebook`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userEmail: localStorage.getItem("email"),
-            name: session.user.name,
-            email: session.user.email,
-            image: session.user.image,
-            expires: session.expires,
-            accessToken: session?.accessToken,
-          }),
-        });
-
-        const data = await res.json();
-        toast.success(data?.message);
-      }
     } catch (error) {
-      console.error("Facebook login error:", error);
-      toast.error("Failed to sign in with Facebook. Please try again.");
+      console.error("Error redirecting to Facebook OAuth:", error);
+      toast.error("Failed to initiate Facebook login. Please try again.");
     }
   };
 
   const handleFacebookDisconnect = async () => {
-    await NextSignOut();
-    localStorage.removeItem("facebookAccessToken");
+    await fetch("/api/auth/facebook/token", {
+      method: "DELETE",
+      cache: "no-cache",
+    });
+
+    setUser(null)
+    setToken(null)
+
+    toast.success("Disconnected from Facebook successfully!");
+    
     router.refresh();
   };
 
   return (
     <div>
-      {session ? (
+      {(user && token) ? (
         <div className="border border-gray-200 p-4 rounded-lg shadow-md">
           <h1 className="text-lg font-semibold">Facebook Info</h1>
 
           <div className="my-4 text-base">
             <div>
               <img
-                src={session?.user?.image}
+                src={user?.picture?.data?.url}
                 alt=""
                 className="h-16 w-16 rounded-full"
               />
@@ -91,11 +125,11 @@ function FacebookInfo() {
 
             <div className="flex justify-between mt-4">
               <div className="text-gray-500 ">Name</div>
-              <div>{session?.user?.name}</div>
+              <div>{user?.name}</div>
             </div>
             <div className="flex justify-between mt-2">
               <div className="text-gray-500 ">Email</div>
-              <div>{session?.user?.email}</div>
+              <div>{user?.email}</div>
             </div>
           </div>
           <Button

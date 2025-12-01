@@ -1,20 +1,22 @@
-"use client"
-import React, { useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Check, Copy, Eye, EyeOff } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useFacebook } from "@/contexts/FacebookContext";
 
 function FacebookToken() {
   const [showPassword, setShowPassword] = useState(false);
   const [copied, setCopied] = useState(false);
-  const {data: session}:any = useSession()
+  const { user, token } = useFacebook();
+
+  console.log("FacebookToken component - user:", user);
+  console.log("FacebookToken component - token:", token);
 
   const handleCopyToken = () => {
-
-    if (session) {
-      navigator.clipboard.writeText(session?.accessToken);
+    if (user && token) {
+      navigator.clipboard.writeText(token);
       setCopied(true);
 
       setTimeout(() => {
@@ -27,11 +29,50 @@ function FacebookToken() {
     }
   };
 
-  if(!session){
-    return null
+  const getSessionData = async () => {
+    try {
+      const res = await fetch(`/api/auth/facebook/token`, {
+        method: "GET",
+      });
+
+      const session: any = await res.json();
+
+      console.log("Facebook session token:", session);
+
+      if (session) {
+        localStorage.setItem("facebookAccessToken", session?.fb_access_token);
+
+        const res = await fetch(`/api/facebook`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userEmail: localStorage.getItem("email"),
+            name: session.user.name,
+            email: session.user.email,
+            image: session.user.image,
+            // expires: session.expires,
+            accessToken: session?.accessToken,
+          }),
+        });
+
+        const data = await res.json();
+        toast.success(data?.message);
+      }
+    } catch (error) {
+      console.error("Facebook login error:", error);
+      toast.error("Failed to sign in with Facebook. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    getSessionData();
+  }, []);
+
+  if (!token) {
+    return null;
   }
-
-
 
   return (
     <div className="mt-8 border border-gray-200 p-4 rounded-lg shadow-md">
@@ -41,7 +82,7 @@ function FacebookToken() {
         <Input
           type={showPassword ? "text" : "password"}
           name="token"
-          value={session?.accessToken || "No token found"}
+          value={token || "No token found"}
           readOnly
           className="pr-[64px]"
         />

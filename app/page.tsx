@@ -19,6 +19,7 @@ import Token from "@/components/Token";
 import FacebookToken from "@/components/FacebookToken";
 import FacebookInfo from "@/components/FacebookInfo";
 
+
 type UserType = {
   name: string;
   email: string;
@@ -81,7 +82,6 @@ function Home() {
             <FacebookToken />
           </div>
         </div>
-
 
         <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-700 mt-8">
           Logout
