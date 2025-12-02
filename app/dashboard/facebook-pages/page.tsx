@@ -213,7 +213,7 @@ function Pages() {
                     alt="Facebook Logo"
                     className="w-10 h-10 rounded-full object-cover"
                   />
-                  <div className="font-medium">{page.name} {!subscribedStatus[page.id] && <Badge className="bg-green-600">Subscribed</Badge> } </div>
+                  <div className="font-medium">{page.name} {subscribedStatus[page.id] && <Badge className="bg-green-600">Subscribed</Badge> } </div>
                 </div>
 
                 <div className="text-sm text-gray-500 space-y-1 mb-4 w-full">
