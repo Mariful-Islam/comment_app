@@ -36,36 +36,6 @@ function FacebookInfo() {
     }
   }, [user && token]);
 
-  // const handleFacebookLoginOld = async () => {
-  //   try {
-  //     const result: any = await signIn("facebook");
-
-  //     if (user && token) {
-  //       localStorage.setItem("facebookAccessToken", token);
-
-  //       const res = await fetch(`/api/facebook`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           userEmail: localStorage.getItem("email"),
-  //           name: session.user.name,
-  //           email: session.user.email,
-  //           image: session.user.image,
-  //           expires: session.expires,
-  //           accessToken: session?.accessToken,
-  //         }),
-  //       });
-
-  //       const data = await res.json();
-  //       toast.success(data?.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Facebook login error:", error);
-  //     toast.error("Failed to sign in with Facebook. Please try again.");
-  //   }
-  // };
 
   const handleFacebookLogin = async () => {
     const fbAuthUrl = new URL("https://www.facebook.com/v23.0/dialog/oauth");
@@ -80,7 +50,7 @@ function FacebookInfo() {
     );
     fbAuthUrl.searchParams.set(
       "scope",
-      "pages_show_list,pages_read_engagement,pages_manage_posts"
+      "pages_show_list,pages_read_engagement,pages_manage_posts,public_profile,email,business_management,pages_manage_metadata,pages_read_user_content,pages_manage_ads"
     );
     fbAuthUrl.searchParams.set("response_type", "code");
 

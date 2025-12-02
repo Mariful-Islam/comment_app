@@ -11,8 +11,6 @@ function FacebookToken() {
   const [copied, setCopied] = useState(false);
   const { user, token } = useFacebook();
 
-  console.log("FacebookToken component - user:", user);
-  console.log("FacebookToken component - token:", token);
 
   const handleCopyToken = () => {
     if (user && token) {
@@ -37,7 +35,6 @@ function FacebookToken() {
 
       const session: any = await res.json();
 
-      console.log("Facebook session token:", session);
 
       if (session) {
         localStorage.setItem("facebookAccessToken", session?.fb_access_token);

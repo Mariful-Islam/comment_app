@@ -21,7 +21,6 @@ export const FacebookProvider = ({ children }: Props) => {
         const res = await fetch("/api/auth/facebook/token");
         const session = await res.json();
 
-        console.log("Facebook session:", session);
 
         if (session?.fb_access_token) {
           setToken(session.fb_access_token);

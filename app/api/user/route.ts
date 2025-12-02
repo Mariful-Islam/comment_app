@@ -17,7 +17,6 @@ export async function GET(req: NextRequest) {
 
     const user = await User.findOne({ email });
     
-    console.log("User found:", user);
 
     if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });

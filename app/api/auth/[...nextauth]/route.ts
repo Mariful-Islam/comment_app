@@ -22,7 +22,6 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }:any ) {
-      console.log(session, "00000000000")
       session.access_token = token.access_token;
       return session;
     },
