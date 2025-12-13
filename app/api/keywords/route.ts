@@ -6,17 +6,17 @@ export async function POST(req: Request) {
   try {
     await connectToDB();
 
-    const { postId, keyword, message } = await req.json();
+    const { postId, keyword, comment, message } = await req.json();
 
 
-    if (!postId || !keyword || !message) {
+    if (!postId || !keyword || !comment || !message) {
       return NextResponse.json(
         { message: 'All fields are required.' },
         { status: 400 }
       );
     }
 
-    const newKeyword = await Keyword.create({ postId, keyword, message });
+    const newKeyword = await Keyword.create({ postId, keyword, comment, message });
 
     return NextResponse.json(newKeyword, { status: 201 });
   } catch (error: any) {

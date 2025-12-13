@@ -32,7 +32,7 @@ export async function PATCH(req: Request, { params }: { params: any }) {
 
     const body = await req.json();
 
-    const { postId, keyword, message } = body;
+    const { postId, keyword, comment, message } = body;
 
     if (!id && !postId) {
       return NextResponse.json(
@@ -46,7 +46,7 @@ export async function PATCH(req: Request, { params }: { params: any }) {
 
     const updatedKeyword = await Keyword.findOneAndUpdate(
       filter,
-      { keyword, message },
+      { keyword, comment, message },
       { new: true }
     );
 

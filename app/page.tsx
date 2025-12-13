@@ -18,6 +18,7 @@ import {
 import Token from "@/components/Token";
 import FacebookToken from "@/components/FacebookToken";
 import FacebookInfo from "@/components/FacebookInfo";
+import { useFacebookLogin } from "@/hooks/useFacebookLogin";
 
 
 type UserType = {
@@ -29,6 +30,7 @@ type UserType = {
 function Home() {
   const router = useRouter();
   const { user, loading, fetchUser } = useUser();
+  const {login} = useFacebookLogin()
 
   const handleLogout = async () => {
     localStorage.removeItem("token");
@@ -36,6 +38,14 @@ function Home() {
     await signOut(auth);
     router.refresh();
     router.replace("/login");
+  };
+
+  const handleLogin = async () => {
+    const auth = await login();
+    if (auth) {
+      console.log("Access token:", auth.accessToken);
+      // send to backend API
+    }
   };
 
   return (
@@ -82,6 +92,7 @@ function Home() {
             <FacebookToken />
           </div>
         </div>
+
 
         <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-700 mt-8">
           Logout

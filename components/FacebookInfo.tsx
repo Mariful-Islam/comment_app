@@ -1,14 +1,15 @@
-
 import { signIn, signOut as NextSignOut } from "next-auth/react";
 import React, { use, useEffect } from "react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { redirect, useRouter } from "next/navigation";
 import { useFacebook } from "@/contexts/FacebookContext";
+import { Spinner } from "./ui/shadcn-io/spinner";
 
 function FacebookInfo() {
   const router = useRouter();
   const { user, token, setUser, setToken } = useFacebook();
+  const [isStartingAutomation, setIsStartingAutomation] = React.useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -36,7 +37,6 @@ function FacebookInfo() {
     }
   }, [user && token]);
 
-
   const handleFacebookLogin = async () => {
     const fbAuthUrl = new URL("https://www.facebook.com/v23.0/dialog/oauth");
 
@@ -50,21 +50,17 @@ function FacebookInfo() {
     );
     fbAuthUrl.searchParams.set(
       "scope",
-      "pages_show_list,pages_read_engagement,pages_manage_posts,public_profile,email,business_management,pages_manage_metadata,pages_read_user_content,pages_manage_ads"
+      "pages_show_list,pages_read_engagement,pages_manage_posts,public_profile,email,business_management,pages_manage_metadata,pages_read_user_content,pages_manage_ads,pages_manage_engagement"
     );
     fbAuthUrl.searchParams.set("response_type", "code");
 
-  
-
-
     try {
       window.location.href = fbAuthUrl.toString();
-
     } catch (error) {
       console.error("Error redirecting to Facebook OAuth:", error);
-      toast.error("Failed to initiate Facebook login. Please try again.");
     }
   };
+
 
   const handleFacebookDisconnect = async () => {
     await fetch("/api/auth/facebook/token", {
@@ -72,17 +68,21 @@ function FacebookInfo() {
       cache: "no-cache",
     });
 
-    setUser(null)
-    setToken(null)
+    setUser(null);
+    setToken(null);
 
     toast.success("Disconnected from Facebook successfully!");
-    
+
     router.refresh();
+  };
+
+  const startAutomationHandler = () => {
+    setIsStartingAutomation(!isStartingAutomation);
   };
 
   return (
     <div>
-      {(user && token) ? (
+      {user && token ? (
         <div className="border border-gray-200 p-4 rounded-lg shadow-md">
           <h1 className="text-lg font-semibold">Facebook Info</h1>
 
@@ -104,12 +104,29 @@ function FacebookInfo() {
               <div>{user?.email}</div>
             </div>
           </div>
-          <Button
-            onClick={handleFacebookDisconnect}
-            className="bg-red-100 text-red-500 hover:bg-red-500 hover:text-white"
-          >
-            Disconnect Facebook
-          </Button>
+
+          <div>
+            <Button
+              onClick={handleFacebookDisconnect}
+              className="bg-red-100 text-red-500 hover:bg-red-500 hover:text-white"
+            >
+              Disconnect Facebook
+            </Button>
+
+            <Button
+              onClick={startAutomationHandler}
+              className="ml-4 bg-green-500 hover:bg-green-700 text-white"
+            >
+              {isStartingAutomation ? (
+                <div className="flex gap-3 items-center">
+                  <div>Running</div>
+                  <Spinner />
+                </div>
+              ) : (
+                "Start Automation"
+              )}
+            </Button>
+          </div>
         </div>
       ) : (
         <Button

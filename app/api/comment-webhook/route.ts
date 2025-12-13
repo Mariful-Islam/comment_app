@@ -1,4 +1,8 @@
+import Token from '@/components/Token';
+import { Keyword } from '@/models/Keyword';
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+
 
 export async function GET(request: NextRequest) {
   // Facebook webhook verification
@@ -19,6 +23,13 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+
+  const fbAccessTokenRes = await fetch('https://comment-app-sigma.vercel.app/api/auth/facebook/token', {
+    cache: 'no-cache'
+  });
+  const fbAccessTokenData = await fbAccessTokenRes.json();
+  const fbAccessToken = fbAccessTokenData?.fb_access_token;
+
   try {
     const body = await request.json();
 
@@ -46,8 +57,53 @@ export async function POST(request: NextRequest) {
           const { message, comment_id, sender_id } = change.value;
           console.log(`💬 New comment from ${sender_id}: ${message} (ID: ${comment_id})`);
 
-          // 👉 You can handle your business logic here:
-          // e.g., reply to the comment, store it in a database, etc.
+
+
+          console.log('Fetched Facebook Access Token from API:', fbAccessToken);
+
+
+          const keywordEntry = await Keyword.findOne({ where: { trigger: message?.toLowerCase() } });
+
+          let replyMessage = 'Thank you for your comment!';
+
+          if (keywordEntry) {
+            replyMessage = keywordEntry.response;
+            console.log(`➡️ Found matching keyword. Replying with: ${replyMessage}`);
+          } else {
+            console.log('➡️ No matching keyword found. Using default reply.');
+          }
+
+          const messageToSend = replyMessage; 
+
+
+          // page access Token
+          const pageAccessTokenRes = await fetch(`https://graph.facebook.com/v23.0/me/accounts?access_token=${fbAccessToken}`)
+          const pageAccessTokenData = await pageAccessTokenRes.json();
+          const token = pageAccessTokenData?.data.includes()
+
+          entries[0].id
+          
+
+          // Keyword.
+
+          if (fbAccessToken) {
+
+            const messageResponse = await fetch(`https://graph.facebook.com/v23.0/me/messages?access_token=${token}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                "message": {"text": message},
+                "recipient": {"comment_id": comment_id}
+              }),
+            })
+
+            const messageData = await messageResponse.json()
+            console.  log('➡️ Reply sent:', messageData);
+          }
+
+
         }
       }
     }

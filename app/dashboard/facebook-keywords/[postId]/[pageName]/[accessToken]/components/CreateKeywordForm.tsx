@@ -20,7 +20,7 @@ interface CreateKeywordFormProps {
 }
 
 function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateKeywordFormProps) {
-  const [form, setForm] = React.useState({ postId: postId, keyword: "", message: "" });
+  const [form, setForm] = React.useState({ postId: postId, keyword: "", comment: "", message: "" });
   const [loading, setLoading] = React.useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +47,7 @@ function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateK
         onclose();
         refreshKeywords();
         setLoading(false);
-        setForm({ keyword: "", message: "", postId: postId });
+        setForm({ keyword: "", comment: "", message: "", postId: postId });
 
       } else {
         // Handle error (e.g., show an error message)
@@ -77,6 +77,17 @@ function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateK
               placeholder="Keyword"
               name="keyword"
               value={form?.keyword || ""}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col gap-4 mt-6">
+            <Label htmlFor="comment">Comment</Label>
+            <Input
+              type="text"
+              id="comment"
+              placeholder="comment"
+              name="comment"
+              value={form?.comment || ""}
               onChange={handleChange}
             />
           </div>

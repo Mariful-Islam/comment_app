@@ -77,8 +77,13 @@ function CommentKeyword() {
       cell: ({ row }: any) => <div>{row?.getValue("keyword")}</div>,
     },
     {
+      accessorKey: "comment",
+      header: "Comment Reply",
+      cell: ({ row }: any) => <div>{row?.getValue("comment")}</div>,
+    },
+    {
       accessorKey: "message",
-      header: "Message",
+      header: "Message Reply",
       cell: ({ row }: any) => (
         <div className=" line-clamp-1 max-w-[300px]">
           {row?.getValue("message")}
@@ -137,7 +142,7 @@ function CommentKeyword() {
             <Spinner />
           </div>
         ) : (
-          <DataTable columns={columns} data={keywords} searchColumn={""} />
+          <DataTable columns={columns} data={keywords || []} searchColumn={""} />
         )}
 
         {isOpenCreateKeywordForm && (

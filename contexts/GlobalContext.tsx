@@ -10,7 +10,7 @@ import { auth } from "@/lib/firebase";
 export const GlobalContext = createContext<any>(null);
 
 const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
-  const [openHeaderSidebar, setOpenHeaderSidebar] = useState(true);
+  const [openHeaderSidebar, setOpenHeaderSidebar] = useState(window.innerWidth > 500 ? true : false);
   const [filter, setFilter] = useState<boolean>(false);
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [isOpenUpdateForm, setIsOpenUpdateForm] = useState<boolean>(false);
