@@ -2,6 +2,7 @@ import Token from "@/components/Token";
 import { Facebook } from "@/models/Facebook";
 import { Keyword } from "@/models/Keyword";
 import { User } from "@/models/User";
+import { constants } from "buffer";
 import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -69,11 +70,15 @@ export async function POST(request: NextRequest) {
             // const cookieStore = cookies();
             // const fbAccessToken = (await cookieStore).get("fb_access_token")?.value;
 
-            const API_URL = `https://comment-app-ai5w.vercel.app`
+            // const API_URL = `https://comment-app-ai5w.vercel.app`
 
-            const fbAccessTokenRes = await fetch(`${API_URL}/api/auth/facebook/token`)
-            const fbAccessTokenData = await fbAccessTokenRes.json()
-            const fbAccessToken = fbAccessTokenData?.fb_access_token
+            // const fbAccessTokenRes = await fetch(`${API_URL}/api/auth/facebook/token`)
+            // const fbAccessTokenData = await fbAccessTokenRes.json()
+            // const fbAccessToken = fbAccessTokenData?.fb_access_token
+
+
+            const fbAccessToken = request.cookies.get('fb_access_token')
+            
 
             console.log(fbAccessToken, "ppppppppppppp");
 
