@@ -9,7 +9,7 @@ export async function GET(
   try {
     await connectToDB();
 
-    const { id } = params;
+    const { id } = await params;
     
     const keywords = await Keyword.find({ postId: id });
 
