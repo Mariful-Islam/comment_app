@@ -66,13 +66,14 @@ export async function POST(request: NextRequest) {
               `➡️ Found matching keyword. Replying with: ${replyMessage}`
             );
 
-            const cookieStore = cookies();
-            const fbAccessToken = (await cookieStore).get("fb_access_token")?.value;
+            // const cookieStore = cookies();
+            // const fbAccessToken = (await cookieStore).get("fb_access_token")?.value;
 
-            // const API_URL = `http://localhost:3000`
+            const API_URL = `https://comment-app-ai5w.vercel.app`
 
-            // const fbAccessTokenRes = await fetch(`${API_URL}/api/auth/facebook/token`)
-            // const fbAccessTokenData = await fbAccessTokenRes.json()
+            const fbAccessTokenRes = await fetch(`${API_URL}/api/auth/facebook/token`)
+            const fbAccessTokenData = await fbAccessTokenRes.json()
+            const fbAccessToken = fbAccessTokenData?.fb_access_token
 
             console.log(fbAccessToken, "ppppppppppppp");
 
