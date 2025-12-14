@@ -28,7 +28,7 @@ export async function GET(
 export async function PATCH(req: Request, { params }: { params: any }) {
   try {
     await connectToDB();
-    const { id } = params
+    const { id } = await params
 
     const body = await req.json();
 
@@ -75,7 +75,7 @@ export async function DELETE(
   try {
     await connectToDB()
 
-    const { id } = params
+    const { id } = await params
 
     if (!id) {
       return NextResponse.json({ error: 'Missing ID' }, { status: 400 })
