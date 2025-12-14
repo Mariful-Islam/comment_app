@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     for (const entry of entries ?? []) {
       for (const change of entry.changes ?? []) {
         if (change.field === 'feed' && change.value.item === 'comment') {
-          const { message, comment_id, sender_id } = change.value;
+          const { message, comment_id, post_id, sender_id } = change.value;
           console.log(`💬 New comment from ${sender_id}: ${message} (ID: ${comment_id})`);
 
 
@@ -62,12 +62,14 @@ export async function POST(request: NextRequest) {
           console.log('Fetched Facebook Access Token from API:', fbAccessToken);
 
 
-          const keywordEntry = await Keyword.findOne({ where: { trigger: message?.toLowerCase() } });
+          const keywordEntry = await Keyword.findOne({ postId: post_id});
+
+          console.log(keywordEntry, "keywordEntry")
 
           let replyMessage = 'Thank you for your comment!';
 
           if (keywordEntry) {
-            replyMessage = keywordEntry.response;
+            replyMessage = keywordEntry.message;
             console.log(`➡️ Found matching keyword. Replying with: ${replyMessage}`);
           } else {
             console.log('➡️ No matching keyword found. Using default reply.');
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
           // page access Token
           const pageAccessTokenRes = await fetch(`https://graph.facebook.com/v23.0/me/accounts?access_token=${fbAccessToken}`)
           const pageAccessTokenData = await pageAccessTokenRes.json();
-          const token = pageAccessTokenData?.data.includes()
+          // const token = pageAccessTokenData?.data.includes()
 
           entries[0].id
           
@@ -88,7 +90,7 @@ export async function POST(request: NextRequest) {
 
           if (fbAccessToken) {
 
-            const messageResponse = await fetch(`https://graph.facebook.com/v23.0/me/messages?access_token=${token}`, {
+            const messageResponse = await fetch(`https://graph.facebook.com/v23.0/me/messages?access_token=${fbAccessToken}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
