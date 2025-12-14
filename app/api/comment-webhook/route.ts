@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       changes: Array<{
         field: string;
         value: {
+          from: any;
           item: string;
           verb: string;
           message?: string;
@@ -49,7 +50,20 @@ export async function POST(request: NextRequest) {
 
     for (const entry of entries ?? []) {
       for (const change of entry.changes ?? []) {
-        if (change.field === "feed" && change.value.item === "comment") {
+
+        const fbAccessToken = `EAALEu4RXGR0BQJk66DdJRJxdwzzRZCBdOlbUHTkLGs8srzUqPZA6fWnWF4ySW4GuTAEH8Hbk5UuZA4OgxfkBIDHpnBJeW6Ai9jACDHlboGzFJ4m2I2Iv5MgABZCCYjywLz8WUkeIGzhMDkPn6Cv0z0hSrpXHSteh2uHqrt28yPekiJek8S5cLq62ZB6GtOSbd7OnNu2gXwwIrn1yOSjZAMzdFZAb3AlFzfJ8cVMms9ZA0bUpa7YZCf58tWzs0N81E15JbHR6jEuDQr0WIRRuY66uCZCrCZA2XPSuGU76f5K`
+
+        const pagesRes = await fetch(`https://graph.facebook.com/v23.0/me/accounts?access_token=${fbAccessToken}`);
+        const pagesJson = await pagesRes.json();
+
+        const pagesData = pagesJson?.data || [];
+
+        const targetPageId = entry?.id;
+
+        const page = pagesData.find((p: any): any => p.id === targetPageId);
+
+
+        if (change.field === "feed" && change.value.item === "comment", change.value.from?.id !== entry?.id ) {
           const { message, comment_id, post_id, sender_id } = change.value;
           console.log(
             `💬 New comment from ${sender_id}: ${message} (ID: ${comment_id})`
@@ -61,8 +75,12 @@ export async function POST(request: NextRequest) {
 
           let replyMessage = "Thank you for your comment!";
 
+          let replyComment = ""
+
           if (keywordEntry) {
-            replyMessage = keywordEntry.message;
+            replyMessage = keywordEntry?.message;
+            replyComment = keywordEntry?.comment;
+
             console.log(
               `➡️ Found matching keyword. Replying with: ${replyMessage}`
             );
@@ -77,26 +95,26 @@ export async function POST(request: NextRequest) {
             // const fbAccessToken = fbAccessTokenData?.fb_access_token
 
 
-            const fbAccessToken = request.cookies.get('fb_access_token')
+            // const fbAccessToken = request.cookies.get('fb_access_token')
+
             
 
             console.log(fbAccessToken, "ppppppppppppp");
 
-            const pagesRes = await fetch(`https://graph.facebook.com/v23.0/me/accounts?access_token=${fbAccessToken}`);
-            const pagesJson = await pagesRes.json();
+            // const pagesRes = await fetch(`https://graph.facebook.com/v23.0/me/accounts?access_token=${fbAccessToken}`);
+            // const pagesJson = await pagesRes.json();
 
-            const pagesData = pagesJson?.data || [];
+            // const pagesData = pagesJson?.data || [];
 
-            const targetPageId = entry?.id;
+            // const targetPageId = entry?.id;
 
-            const page = pagesData.find((p: any): any => p.id === targetPageId);
+            // const page = pagesData.find((p: any): any => p.id === targetPageId);
 
             if (!page) {
               throw new Error("Page not found or user has no access");
             }
 
             const pageAccessToken = page?.access_token;
-
 
 
             if (replyMessage && pageAccessToken && comment_id) {
@@ -116,6 +134,23 @@ export async function POST(request: NextRequest) {
 
               const messageData = await messageResponse.json();
               console.log("message sent")
+
+
+              const commentResponse = await fetch(`https://graph.facebook.com/v23.0/${comment_id}/comments?access_token=${pageAccessToken}`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    message: replyComment,
+                  }),
+                }
+              );
+
+              const commentData = await commentResponse.json();
+              console.log("✅ Reply sent to comment:");
+       
             }
           } else {
             console.log("➡️ No matching keyword found. Using default reply.");
