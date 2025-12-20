@@ -5,6 +5,7 @@ export async function GET(req: NextRequest) {
   const cookieStore = cookies();
   const fbAccessToken = (await cookieStore).get("fb_access_token")?.value;
 
+
   if (!fbAccessToken) {
     return NextResponse.json({ error: "No token found" }, { status: 401 });
   }

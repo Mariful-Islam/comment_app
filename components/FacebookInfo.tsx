@@ -15,6 +15,8 @@ function FacebookInfo() {
     if (user && token) {
       localStorage.setItem("facebookAccessToken", token);
 
+      console.log(user, token)
+
       fetch(`/api/facebook`, {
         method: "POST",
         headers: {
@@ -22,6 +24,7 @@ function FacebookInfo() {
         },
         body: JSON.stringify({
           userEmail: localStorage.getItem("email"),
+          // id: ,
           name: user.name,
           email: user.email,
           image: user.picture?.data?.url,

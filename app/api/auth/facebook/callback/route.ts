@@ -7,10 +7,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing code" }, { status: 400 });
   }
 
-  const tokenUrl = new URL("https://graph.facebook.com/v23.0/oauth/access_token");
-  tokenUrl.searchParams.set("client_id", process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID!);
-  tokenUrl.searchParams.set("client_secret", process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET!);
-  tokenUrl.searchParams.set("redirect_uri", process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI!);
+  const tokenUrl = new URL(
+    "https://graph.facebook.com/v23.0/oauth/access_token"
+  );
+  tokenUrl.searchParams.set(
+    "client_id",
+    process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID!
+  );
+  tokenUrl.searchParams.set(
+    "client_secret",
+    process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET!
+  );
+  tokenUrl.searchParams.set(
+    "redirect_uri",
+    process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI!
+  );
   tokenUrl.searchParams.set("code", code);
 
   // Exchange code for access token
@@ -34,9 +45,15 @@ export async function GET(req: NextRequest) {
   //   access_token: userAccessToken,
   //   pages, // includes page id + page access token
   // });
-    // Store tokens in cookies or localStorage (optional)
-  const response = NextResponse.redirect(new URL('/', req.url)); // redirect to home page
-  response.cookies.set("fb_access_token", userAccessToken, { path: "/", httpOnly: true });
+  // Store tokens in cookies or localStorage (optional)
+  const response = NextResponse.redirect(new URL("/", req.url)); // redirect to home page
+  response.cookies.set("fb_access_token", userAccessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    
+  });
   // You could also store page info if needed
 
   return response;

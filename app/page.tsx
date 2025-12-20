@@ -75,14 +75,14 @@ function Home() {
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-6 ">
+        {/* <div className="flex flex-col sm:flex-row gap-6 ">
           <div className="w-full sm:w-1/2">
             <Token />
           </div>
           <div className="w-full sm:w-1/2">
             
           </div>
-        </div>
+        </div> */}
 
         <div className="flex flex-col sm:flex-row gap-6 ">
           <div className="w-full sm:w-1/2 mt-8">
