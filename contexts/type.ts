@@ -18,3 +18,8 @@ export interface FacebookContextType {
   setUser: (user: FacebookUser | null) => void;
   setToken: (token: string | null) => void;
 }
+
+export interface FacebookPageContextType {
+  pages: any | null;
+  getPagesData: () => void;
+}

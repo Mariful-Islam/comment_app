@@ -15,7 +15,6 @@ function FacebookInfo() {
     if (user && token) {
       localStorage.setItem("facebookAccessToken", token);
 
-      console.log(user, token)
 
       fetch(`/api/facebook`, {
         method: "POST",
@@ -98,17 +97,17 @@ function FacebookInfo() {
               />
             </div>
 
-            <div className="flex justify-between mt-4">
-              <div className="text-gray-500 ">Name</div>
+            <div className="flex gap-4 mt-4">
+              {/* <div className="text-gray-500 ">Name</div> */}
               <div>{user?.name}</div>
             </div>
-            <div className="flex justify-between mt-2">
-              <div className="text-gray-500 ">Email</div>
+            <div className="flex gap-4 mt-2">
+              {/* <div className="text-gray-500 ">Email</div> */}
               <div>{user?.email}</div>
             </div>
           </div>
 
-          <div>
+          <div className="flex flex-col sm:flex-row gap-4 mt-12">
             <Button
               onClick={handleFacebookDisconnect}
               className="bg-red-100 text-red-500 hover:bg-red-500 hover:text-white"
@@ -118,7 +117,7 @@ function FacebookInfo() {
 
             <Button
               onClick={startAutomationHandler}
-              className="ml-4 bg-green-500 hover:bg-green-700 text-white"
+              className="bg-green-500 hover:bg-green-700 text-white"
             >
               {isStartingAutomation ? (
                 <div className="flex gap-3 items-center">

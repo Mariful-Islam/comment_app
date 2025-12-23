@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
           const replyComment = keywordEntry?.comment;
 
           // 📨 Private reply (Inbox)
-          if (replyMessage && comment_id) {
+          if (replyMessage && comment_id && keywordEntry?.isActive) {
             await fetch(
               `https://graph.facebook.com/v23.0/me/messages?access_token=${pageAccessToken}`,
               {
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
           }
 
           // 💬 Public comment reply
-          if (replyComment && comment_id) {
+          if (replyComment && comment_id && keywordEntry?.isActive) {
             await fetch(
               `https://graph.facebook.com/v23.0/${comment_id}/comments?access_token=${pageAccessToken}`,
               {

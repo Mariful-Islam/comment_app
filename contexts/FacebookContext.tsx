@@ -15,8 +15,8 @@ export const FacebookProvider = ({ children }: Props) => {
   const router = useRouter();
 
   // Optional: fetch token and user on mount
-  useEffect(() => {
-    const getSessionData = async () => {
+
+   const getSessionData = async () => {
       try {
         const res = await fetch("/api/auth/facebook/token");
         const session = await res.json();
@@ -37,7 +37,10 @@ export const FacebookProvider = ({ children }: Props) => {
       }
     };
 
-    getSessionData();
+  useEffect(() => {
+    if(!(user && token)){
+      getSessionData();
+    }
   }, [router]);
 
   return (

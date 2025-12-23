@@ -110,7 +110,7 @@ function Pages() {
 
   useEffect(() => {
     getPages();
-  }, [router]);
+  }, [token, router]);
 
   const addFeedSubscription = async (accessToken: string) => {
     try {

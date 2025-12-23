@@ -8,6 +8,7 @@ import { UserProvider } from "@/contexts/UserContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SessionProvider } from "next-auth/react";
 import { FacebookProvider } from "@/contexts/FacebookContext";
+import { FacebookPageProvider } from "@/contexts/FacebookPageContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,9 +35,11 @@ export default function RootLayout({
             <UserProvider>
               <SessionProvider>
                 <FacebookProvider>
-                  {children}
+                  <FacebookPageProvider>
+                    {children}
 
-                  <Toaster />
+                    <Toaster />
+                  </FacebookPageProvider>
                 </FacebookProvider>
               </SessionProvider>
             </UserProvider>

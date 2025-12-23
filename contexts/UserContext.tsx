@@ -66,7 +66,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
-    fetchUser();
+    if(!user){
+      fetchUser();
+    }
   }, [pathname]);
 
   return (

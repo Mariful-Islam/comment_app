@@ -85,12 +85,12 @@ function Home() {
         </div> */}
 
         <div className="flex flex-col sm:flex-row gap-6 ">
-          <div className="w-full sm:w-1/2 mt-8">
+          <div className="w-full mt-8">
             <FacebookInfo />
           </div>
-          <div className="w-full sm:w-1/2">
+          {/* <div className="w-full sm:w-1/2">
             <FacebookToken />
-          </div>
+          </div> */}
         </div>
 
 

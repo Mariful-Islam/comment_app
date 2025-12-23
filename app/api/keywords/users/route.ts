@@ -1,0 +1,25 @@
+import { NextResponse } from 'next/server';
+import { connectToDB } from '@/lib/mongodb';
+import { Keyword } from '@/models/Keyword';
+
+export async function POST(req: Request) {
+  try {
+    await connectToDB();
+
+    const { userId, postId, postMessage, keyword, comment, message } = await req.json();
+
+
+    if (!userId || !postId || !postMessage || !keyword || !comment || !message) {
+      return NextResponse.json(
+        { message: 'All fields are required.' },
+        { status: 400 }
+      );
+    }
+
+    const newKeyword = await Keyword.create({ userId, postId, postMessage, keyword, comment, message });
+
+    return NextResponse.json(newKeyword, { status: 201 });
+  } catch (error: any) {
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}

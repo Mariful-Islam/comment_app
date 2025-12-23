@@ -12,15 +12,18 @@ import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 import React from "react";
 
-interface CreateKeywordFormProps {
+interface EditKeywordFormProps {
   postId: string;
   isOpen: boolean;
-  onclose: () => void;
+  onClose: () => void;
+  data: any;
   refreshKeywords: () => void;
 }
 
-function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateKeywordFormProps) {
-  const [form, setForm] = React.useState({ postId: postId, keyword: "", comment: "", message: "" });
+function EditKeywordFormByUser({postId, isOpen, onClose, data, refreshKeywords }: EditKeywordFormProps) {
+
+  const [form, setForm] = React.useState({ postId: postId, keyword: data?.getValue('keyword'), comment: data?.getValue('comment'), message: data?.getValue('message') });
+
   const [loading, setLoading] = React.useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,9 +34,11 @@ function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateK
     e.preventDefault();
     setLoading(true);
 
+    const id = data?.getValue('_id');
+
     try {
-      const res = await fetch("/api/keywords", {
-        method: "POST",
+      const res = await fetch(`/api/keywords/${id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,7 +49,7 @@ function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateK
 
       if (res.ok) {
         // Handle success (e.g., show a success message, close the dialog, etc.)
-        onclose();
+        onClose();
         refreshKeywords();
         setLoading(false);
         setForm({ keyword: "", comment: "", message: "", postId: postId });
@@ -60,13 +65,13 @@ function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateK
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onclose} >
+    <Dialog open={isOpen} onOpenChange={onClose} >
       <DialogHeader>
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
       </DialogHeader>
       <DialogContent className="z-[70]">
-        <h1 className="text-2xl font-bold mb-4 z-auto">Create Keyword</h1>
+        <h1 className="text-2xl font-bold mb-4">Edit Keyword</h1>
 
         <form onSubmit={handleSubmit} >
           <div className="flex flex-col gap-4">
@@ -104,9 +109,9 @@ function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateK
           </div>
 
           <div className="flex justify-end gap-3">
-            <Button type="button" variant={`outline`} onClick={onclose} className="mt-8">Cancel</Button>
+            <Button type="button" variant={`outline`} onClick={onClose} className="mt-8">Cancel</Button>
 
-            <Button type="submit" className="mt-8">{loading ? <Spinner/> : 'Create'}</Button>
+            <Button type="submit" className="mt-8">{loading ? <Spinner/> : 'Update'}</Button>
           </div>
         </form>
       </DialogContent>
@@ -114,4 +119,4 @@ function CreateKeywordForm({ postId, isOpen, onclose, refreshKeywords }: CreateK
   );
 }
 
-export default CreateKeywordForm;
+export default EditKeywordFormByUser;
