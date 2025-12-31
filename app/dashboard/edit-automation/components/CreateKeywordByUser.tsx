@@ -15,6 +15,10 @@ import { RxCross1 } from "react-icons/rx";
 
 import React, { useEffect, useState } from "react";
 import SelectPage from "./SelectPage";
+import { useUser } from "@/contexts/UserContext";
+import { platform } from "os";
+import { useInstagram } from "@/contexts/InstagramContext";
+import SelectInstaPost from "./SelectInstaPost";
 
 interface CreateKeywordFormProps {
   isOpen: boolean;
@@ -27,27 +31,32 @@ function CreateKeywordByUser({
   onclose,
   refreshKeywords,
 }: CreateKeywordFormProps) {
-  const { user, token } = useFacebook();
+  const { user } = useUser();
+
 
   const [post, setPost] = useState<any>(null);
 
   const [form, setForm] = React.useState({
-    userId: user?.id,
+    userId: user?._id,
     postId: "",
     postMessage: "",
+    platform: "",
     keyword: "",
     comment: "",
     message: "",
   });
 
   const [error, setError] = useState<any>(null);
+  const {user: fbUser} = useFacebook();
+  const {user: instaUser} = useInstagram();
+
 
   useEffect(() => {
     if (post) {
       setForm((prev: any) => ({
         ...prev,
         postId: post?.id,
-        postMessage: post?.message,
+        postMessage: form?.platform==="facebook" ? post?.message : post?.caption,
       }));
     }
   }, [post]);
@@ -89,6 +98,7 @@ function CreateKeywordByUser({
           message: "",
           postId: post?.id,
           postMessage: "",
+          platform: "",
         });
       } else {
         // Handle error (e.g., show an error message)
@@ -103,6 +113,7 @@ function CreateKeywordByUser({
   };
 
   const [isOpenPageSelector, setIsOpenPageSelector] = useState<boolean>(false);
+  const [isOpenInstaPostSelector, setIsOpenInstaPostSelector] = useState<boolean>(false);
 
   const handlePageSelect = (e: any) => {
     e.preventDefault();
@@ -115,21 +126,69 @@ function CreateKeywordByUser({
     setPost(null)
   }
 
+
+
+
+  // create options for platform selection if both fbUser and instaUser exist
+  const platformOptions = [];
+  if (fbUser) {
+    platformOptions.push("facebook");
+  }
+  if (instaUser) {
+    platformOptions.push("instagram");
+  } 
+
+
+
+
+  useEffect(() => {
+    if(form?.platform === "facebook" ){
+      setIsOpenPageSelector(true)
+    }
+
+    if(form?.platform === "instagram" ){
+      setIsOpenInstaPostSelector(true)
+    }
+  }, [form?.platform.length]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onclose}>
       <DialogHeader>
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
       </DialogHeader>
-      <DialogContent className="z-[70]">
+      <DialogContent className="z-70">
         <h1 className="text-2xl font-bold mb-4 z-auto">Create Keyword</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <div>
-              <Button variant={`secondary`} onClick={handlePageSelect}>
-                Select Page
-              </Button>
+              {platformOptions?.length > 0 && (
+                <div className="mb-4">
+                  <Label htmlFor="platform" >Platform</Label>
+                  <select
+                    id="platform"
+                    name="platform"
+                    value={form.platform  || "" } 
+                    onChange={(e)=>{
+                      e.preventDefault();
+                      setForm((prev: any) => ({
+                      ...prev,
+                      platform: e.target.value,
+                    }))}}
+                    className="w-full border border-gray-300 rounded-md p-2 mt-4"
+                  >
+                    <option value="" disabled>
+                      Select Platform
+                    </option>
+                    {platformOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}  
             </div>
 
             {isOpenPageSelector && (
@@ -140,6 +199,16 @@ function CreateKeywordByUser({
               />
             )}
 
+            {isOpenInstaPostSelector && (
+              <SelectInstaPost
+                isOpen={isOpenInstaPostSelector}
+                onClose={() => setIsOpenInstaPostSelector(false)}
+                handleSetPost={handleSetPost}
+              />
+            )}
+
+            
+
             {post && (
               <div className="mt-6">
                 <div className="font-bold">Selected Post</div>
@@ -147,7 +216,7 @@ function CreateKeywordByUser({
                   <Button variant={`link`} onClick={removePost}><RxCross1 className="text-red-500"/></Button>
                 </div>
                 <div className="p-4 border border-blue-500 rounded-md w-full ">
-                  {post?.message}
+                  {form?.platform === "facebook" ? post?.message : post?.caption}
                 </div>
               </div>
             )}

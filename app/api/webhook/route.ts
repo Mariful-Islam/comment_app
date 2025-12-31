@@ -23,7 +23,7 @@ export async function GET(req:any) {
  */
 export async function POST(req:any) {
   const body = await req.json();
-  console.log("📩 Incoming webhook event:", JSON.stringify(body, null, 2));
+  console.log("📩 Incoming webhook event:");
 
   if (body.object === "page") {
     for (const entry of body.entry) {
@@ -35,7 +35,7 @@ export async function POST(req:any) {
         const userId = change.value?.from?.id;
 
         if (comment && comment.toLowerCase().includes("price")) {
-          console.log(`💬 Detected "price" keyword from user ${userId}`);
+          console.log(`💬 Detected "price" keyword from user`);
 
           const messageSent = await sendMessageToUser(userId);
 
@@ -84,7 +84,7 @@ async function sendMessageToUser(userId:any) {
     );
 
     const sendData = await sendRes.json();
-    console.log("📤 Message sent response:", sendData);
+    console.log("📤 Message sent response:");
 
     return !!sendData.recipient_id;
   } catch (err) {
@@ -110,7 +110,7 @@ async function sendCommentReply(commentId:any) {
     );
 
     const data = await res.json();
-    console.log("💬 Comment reply sent:", data);
+    console.log("💬 Comment reply sent:");
   } catch (err) {
     console.error("🚨 Error sending comment reply:", err);
   }

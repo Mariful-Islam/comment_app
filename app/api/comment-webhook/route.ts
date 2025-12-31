@@ -2,9 +2,6 @@ import Token from "@/components/Token";
 import { Facebook } from "@/models/Facebook";
 import { FacebookPage } from "@/models/FacebookPage";
 import { Keyword } from "@/models/Keyword";
-import { User } from "@/models/User";
-import { constants } from "buffer";
-import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -31,7 +28,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("📬 Webhook event:", JSON.stringify(body, null, 2));
+    console.log("📬 Webhook event:");
 
     for (const entry of body.entry ?? []) {
       const pageId = entry.id;
@@ -54,7 +51,6 @@ export async function POST(request: NextRequest) {
         ) {
           const { comment_id, post_id, message, sender_id } = change.value;
 
-          console.log(`💬 Comment from ${sender_id}: ${message}`);
 
           const keywordEntry = await Keyword.findOne({ postId: post_id });
 

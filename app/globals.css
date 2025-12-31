@@ -13,6 +13,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+td, th {
+    /* width: 0; */
+    height: 40px;
+}
+
 
 .spinner {
   width: 20px;

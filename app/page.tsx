@@ -19,6 +19,7 @@ import Token from "@/components/Token";
 import FacebookToken from "@/components/FacebookToken";
 import FacebookInfo from "@/components/FacebookInfo";
 import { useFacebookLogin } from "@/hooks/useFacebookLogin";
+import InstagramInfo from "@/components/InstagramInfo";
 
 
 type UserType = {
@@ -30,7 +31,6 @@ type UserType = {
 function Home() {
   const router = useRouter();
   const { user, loading, fetchUser } = useUser();
-  const {login} = useFacebookLogin()
 
   const handleLogout = async () => {
     localStorage.removeItem("token");
@@ -40,17 +40,11 @@ function Home() {
     router.replace("/login");
   };
 
-  const handleLogin = async () => {
-    const auth = await login();
-    if (auth) {
-      console.log("Access token:", auth.accessToken);
-      // send to backend API
-    }
-  };
+
 
   return (
     <Layout>
-      <div className="max-w-[1200px] mx-auto mt-4">
+      <div className="max-w-300 mx-auto mt-4">
         <div className="flex flex-col gap-4">
           {loading ? (
             <div className="animate-pulse flex flex-col gap-2 ">
@@ -84,13 +78,13 @@ function Home() {
           </div>
         </div> */}
 
-        <div className="flex flex-col sm:flex-row gap-6 ">
-          <div className="w-full mt-8">
+        <div className="flex flex-col sm:flex-row gap-6 mt-8 ">
+          <div className="w-full sm:w-1/2">
             <FacebookInfo />
           </div>
-          {/* <div className="w-full sm:w-1/2">
-            <FacebookToken />
-          </div> */}
+          <div className="w-full sm:w-1/2">
+            <InstagramInfo />
+          </div>
         </div>
 
 

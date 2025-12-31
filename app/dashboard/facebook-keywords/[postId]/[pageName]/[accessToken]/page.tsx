@@ -119,7 +119,7 @@ function CommentKeyword() {
 
   return (
     <Layout>
-      <div className="max-w-[1200px] mx-auto mt-5">
+      <div className="max-w-300 mx-auto mt-5">
         <div
           className="flex items-center gap-2 mb-4"
           onClick={() => router.back()}
@@ -128,8 +128,10 @@ function CommentKeyword() {
             <ArrowLeft className="h-5 w-5 " />
           </span>
           <h1 className="text-xl font-bold">Posts</h1>
+
+
         </div>
-        <h1 className="text-gray-500 mb-2 line-clamp-1 max-w-[200px]">
+        <h1 className="text-gray-500 mb-2 line-clamp-1 max-w-50">
           {decodeURIComponent(pageName)}
         </h1>
 

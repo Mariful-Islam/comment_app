@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type UserType = {
+  _id: string;
   name: string;
   email: string;
   imageUrl?: string;

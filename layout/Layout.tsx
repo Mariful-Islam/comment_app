@@ -17,9 +17,9 @@ function Layout({ children, provider }: { children: React.ReactNode, provider?: 
         <div className="w-full">
           <Header />
           <div
-            className={` p-3 px-6 overflow-auto ${
+            className={` p-3 px-4 sm:px-6 overflow-auto ${
               openHeaderSidebar
-                ? "ml-0 mh:ml-[250px] blur-md mh:blur-none"
+                ? "ml-0 mh:ml-62.5 blur-md mh:blur-none"
                 : "ml-0 mh:ml-12"
             } duration-200`}
           >

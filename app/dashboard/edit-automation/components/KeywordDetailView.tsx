@@ -1,0 +1,96 @@
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Minus, Plus } from "lucide-react";
+import React from "react";
+
+interface KeywordDetailViewProps {
+  isOpen: boolean;
+  onClose: VoidFunction;
+  data: any;
+}
+
+function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
+
+  return (
+    <Drawer open={isOpen} onOpenChange={onClose}>
+      <DrawerContent>
+        <div className="mx-auto w-full max-w-md">
+          <DrawerHeader>
+            <DrawerTitle></DrawerTitle>
+            <DrawerDescription></DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4 pb-6">
+            <div className="mt-3 h-60">
+              <div className="max-w-md border rounded-lg shadow-sm p-4 bg-white">
+                {/* Header: Platform & Status */}
+                <div className="flex justify-between items-center mb-3">
+                  <span
+                    className={`uppercase text-xs font-bold tracking-wider ${
+                      data?.platform === "facebook"
+                        ? "text-blue-600"
+                        : "text-pink-500"
+                    } `}
+                  >
+                    {data?.platform}
+                  </span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      data?.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    {data?.isActive ? "● Active" : "● Inactive"}
+                  </span>
+                </div>
+
+                {/* Post Context */}
+                <div className="bg-gray-50 p-2 rounded text-sm text-gray-600 mb-3 italic">
+                  " {data?.postMessage.substring(0, 60)}... "
+                </div>
+
+                {/* The Actual Comment */}
+                <div className="mb-4 text-sm sm:text-md">
+               
+                  <div className="text-gray-400 font-medium flex items-center justify-between">
+                    Keyword: <span className="text-gray-800">{data?.keyword}</span>
+                  </div>
+                  <div className="text-gray-400 font-medium flex items-center justify-between">
+                    Comment Reply: <span className="text-gray-800">{data?.comment}</span>
+                  </div>
+                  <div className="text-gray-400 font-medium flex items-center justify-between">
+                    Message Reply: <span className="text-gray-800">{data?.message}</span>
+                  </div>
+                </div>
+
+                {/* Footer: User & Time */}
+                <div className="flex justify-between items-center border-t pt-3 text-xs text-gray-500">
+                  <span>User: {data?.userId}</span>
+                  <span>
+                    {new Date(data?.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="outline">Close</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+export default KeywordDetailView;

@@ -22,7 +22,7 @@ interface EditKeywordFormProps {
 
 function EditKeywordFormByUser({postId, isOpen, onClose, data, refreshKeywords }: EditKeywordFormProps) {
 
-  const [form, setForm] = React.useState({ postId: postId, keyword: data?.getValue('keyword'), comment: data?.getValue('comment'), message: data?.getValue('message') });
+  const [form, setForm] = React.useState({ postId: postId, keyword: data?.keyword, comment: data?.comment, message: data?.message });
 
   const [loading, setLoading] = React.useState(false);
 
@@ -34,7 +34,7 @@ function EditKeywordFormByUser({postId, isOpen, onClose, data, refreshKeywords }
     e.preventDefault();
     setLoading(true);
 
-    const id = data?.getValue('_id');
+    const id = data?._id;
 
     try {
       const res = await fetch(`/api/keywords/${id}`, {
@@ -70,7 +70,7 @@ function EditKeywordFormByUser({postId, isOpen, onClose, data, refreshKeywords }
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
       </DialogHeader>
-      <DialogContent className="z-[70]">
+      <DialogContent className="z-70">
         <h1 className="text-2xl font-bold mb-4">Edit Keyword</h1>
 
         <form onSubmit={handleSubmit} >
