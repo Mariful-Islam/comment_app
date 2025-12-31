@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 
-type Params = Promise<{ id: number }>
+type Params = Promise<{ id: string }>
 
 
 export async function GET(req: NextRequest, { params }: { params: Params } ) {

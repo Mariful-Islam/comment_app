@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
 
-interface IFacebook extends Document {
+interface IInstagram extends Document {
     userEmail: string;
     name: string;
     email: string;
@@ -9,7 +9,7 @@ interface IFacebook extends Document {
     accessToken: string;
 }
 
-const FacebookSchema = new Schema<IFacebook>({
+const InstagramSchema = new Schema<IInstagram>({
     userEmail: { type: String, required: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -20,4 +20,4 @@ const FacebookSchema = new Schema<IFacebook>({
     timestamps: true
 });
 
-export const Facebook = mongoose.models.Facebook || mongoose.model<IFacebook>('Facebook', FacebookSchema);
+export const Instagram = mongoose.models.Instagram || mongoose.model<IInstagram>('Instagram', InstagramSchema);
