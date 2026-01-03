@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { FaGoogle } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 function Signup() {
   const [form, setForm] = React.useState({ email: "", password: "" });
@@ -17,6 +18,17 @@ function Signup() {
 
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
+
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace("/"); // Redirect to home if already logged in
+    }
+  }, [isLoading, isAuthenticated]);
+
+  if (isLoading || isAuthenticated) return null; // prevent flicker
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

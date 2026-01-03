@@ -30,6 +30,13 @@ export async function POST(req: NextRequest) {
       });
       instance.save();
       return NextResponse.json(instance, { status: 201 });
+    } else {
+      instagramInstance.name = name;
+      instagramInstance.image = image;
+      instagramInstance.expires = new Date(expires);
+      instagramInstance.accessToken = accessToken;
+      await instagramInstance.save();
+      return NextResponse.json(instagramInstance, { status: 200 });
     }
   } catch {
     return NextResponse.json(
