@@ -24,12 +24,12 @@ function Sidebar() {
   });
 
   return (
-    <div className="text-[12px] fixed z-[60] h-screen" ref={ref as any}>
+    <div className="text-[12px] fixed z-60 h-screen" ref={ref as any}>
       <div
         className={`p-2 border-r border-slate-200 dark:border-slate-600 absolute  h-screen shadow-md mh:shadow-none  ${
           openHeaderSidebar
-            ? "w-[250px] bg-white dark:bg-gray-800 "
-            : "w-0 overflow-hidden opacity-0 mh:opacity-100 mh:overflow-visible mh:w-[55px] bg-white dark:bg-gray-800 z-50"
+            ? "w-62.5 bg-white dark:bg-gray-800 "
+            : "w-0 overflow-hidden opacity-0 mh:opacity-100 mh:overflow-visible mh:w-13.75 bg-white dark:bg-gray-800 z-50"
         } duration-200`}
       >
         {openHeaderSidebar ? (
@@ -97,8 +97,8 @@ function Sidebar() {
       <div
         className={`absolute bottom-2 p-2 mh:p-0 m-0 mh:m-2 overflow-hidden ${
           openHeaderSidebar
-            ? "w-[233px] bg-white dark:bg-gray-800 "
-            : "w-0 overflow-hidden opacity-0 mh:opacity-100 mh:overflow-visible mh:w-[40px] bg-white dark:bg-gray-800 z-50"
+            ? "w-58.25 bg-white dark:bg-gray-800 "
+            : "w-0 overflow-hidden opacity-0 mh:opacity-100 mh:overflow-visible mh:w-10 bg-white dark:bg-gray-800 z-50"
         }`}
       >
         <Link

@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { FaRegCircleUser } from "react-icons/fa6";
 
 function Header() {
   const router = useRouter();
@@ -54,7 +55,7 @@ function Header() {
     >
       <div className="flex items-center gap-4 sm:gap-8 pr-4">
         <div
-          className="flex mh:hidden flex-col gap-[6px] pl-6"
+          className="flex mh:hidden flex-col gap-1.5 pl-6"
           role="button"
           onClick={toggleHeaderSidebar}
         >
@@ -146,20 +147,24 @@ function Header() {
             <div className="flex items-center hover:bg-gray-200 hover:dark:bg-gray-700 py-1 px-2 rounded-md cursor-pointer">
               {loading ? (
                 <div className="animate-pulse flex gap-2 items-center">
-                  <div className="bg-slate-400 rounded-full w-8 h-8 " />
-                  <div className="text-base font-bold text-nowrap hidden sm:block bg-slate-400 rounded-md w-20 h-4">
+                  <div className=" rounded-full w-8 h-8 " />
+                  <div className="text-base font-bold text-nowrap hidden sm:block rounded-md w-20 h-4">
                     &nbsp;
                   </div>
                 </div>
               ) : (
                 <div className="flex gap-2 items-center">
-                  <img
-                    src={user?.imageUrl || "../assets/Untitled-design--32-.png"}
-                    alt=""
-                    className="bg-slate-400 rounded-full max-w-8 min-w-8 h-8 "
-                    width={32}
-                    height={32}
-                  />
+                  {user?.imageUrl ? (
+                    <img
+                      src={user?.imageUrl}
+                      alt=""
+                      className=" rounded-full max-w-8 min-w-8 h-8 "
+                      width={32}
+                      height={32}
+                    />
+                  ) : (
+                    <FaRegCircleUser className=" rounded-full max-w-6 min-w-6 h-6 w-6 " />
+                  )}
                   <div className="text-base font-bold text-nowrap hidden sm:block">
                     {user?.name}
                   </div>
@@ -176,14 +181,13 @@ function Header() {
               <DropdownMenuItem
                 onClick={() => {
                   router.replace("/dashboard/profile");
-
                 }}
               >
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => {      
+                onClick={() => {
                   // router.replace("/dashboard/profile");
                 }}
               >
@@ -193,8 +197,7 @@ function Header() {
               <DropdownMenuItem
                 onClick={() => {
                   // router.push("/billing");
-                }     
-              }
+                }}
               >
                 Billing
                 <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
@@ -211,7 +214,7 @@ function Header() {
               Log out
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
-          </DropdownMenuContent>    
+          </DropdownMenuContent>
         </DropdownMenu>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Keyword } from "@/models/Keyword";
+import { KeywordUsage } from "@/models/KeywordUsage";
 import { NextRequest, NextResponse } from "next/server";
 import { text } from "stream/consumers";
 
@@ -31,6 +32,8 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
+    console.log("📬 Instagram Webhook Event:", JSON.stringify(body, null, 2));
+
     // 1. Check if this is a standard Webhook notification
     const entry = body.entry?.[0];
     if (!entry || !entry.changes) {
@@ -39,9 +42,12 @@ export async function POST(req: NextRequest) {
 
     for (const change of entry.changes) {
       // 2. Ensure we are handling a comment field
-      if (change.field === "comments") {
+      console.log("Processing change:", entry.id,);
+      if (change.field === "comments" && change?.value?.from?.id !== entry?.id) {
         const { id: commentId, text: message, from } = change.value;
         const recipientId = from.id; // The ID of the person who commented
+
+        console.log("Processing comment ID:", from.username);
 
         // Skip if the comment is from your own account to avoid infinite loops
         // Replace 'YOUR_INSTAGRAM_USERNAME' with your actual handle
@@ -50,9 +56,18 @@ export async function POST(req: NextRequest) {
         const commentText = change.value.text.toLowerCase();
         const postId = change?.value?.media?.id;
 
+        console.log(`New comment on post ${postId}: ${commentText} (Comment ID: ${commentId})`);
 
-        const matchKeyword = await Keyword.findOne({ postId: postId, keyword: { $regex: `\\b${commentText}\\b` } });
+        const words = commentText.trim().split(/\s+/).map((w:any) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')); // escape regex chars
+        console.log("Words Array:", words);
 
+        const regex = new RegExp(`\\b(${words.join('|')})\\b`, 'i');
+
+        console.log("Constructed Regex:", regex);
+
+        const matchKeyword = await Keyword.findOne({ "post.id": postId, keyword: { $regex: regex } });
+
+        console.log("Matched Keyword:", matchKeyword);
 
 
         const accessToken = "IGAALoV9MO92xBZAFpzUFVuTWczZA2tZAeTk5MElYOWtjaFk4S1YtQjFUbWJMM1N1T0ZAUY2gwcEV0cUl3MzNwNkhXU2VvcDZAydGw5QVhnVFpKVVdBOUJWMlhkUzlyamJ2RGg0TXlmbl9jZATJPaV9BMmlBTjBVajhqRE9QRFZA4X3hJOAZDZD"
@@ -63,17 +78,37 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ message: "No matching keyword found" }, { status: 200 });
         }
 
+        let replyComment = "Thanks for reaching out!";
+        let replyMessage = "Thank you for your comment!";
 
-        if(matchKeyword?.message && matchKeyword?.comment && matchKeyword?.isActive) {
+        if (matchKeyword?.isActive) {
+          // Randomly pick from the comments array
+          if (matchKeyword?.comments && matchKeyword?.comments?.length > 0) {
+            const randomCommentIdx = Math.floor(Math.random() * matchKeyword?.comments?.length);
+            replyComment = matchKeyword.comments[randomCommentIdx];
+          }
+
+          // Randomly pick from the messages array
+          if (matchKeyword?.messages && matchKeyword?.messages?.length > 0) {
+            const randomMessageIdx = Math.floor(Math.random() * matchKeyword?.messages?.length);
+            replyMessage = matchKeyword?.messages[randomMessageIdx];
+          }
+        }
+
+
+
+        if( replyComment && replyMessage && matchKeyword?.isActive) {
 
 
           const commentApiUrl = `https://graph.instagram.com/v20.0/${commentId}/replies`;
+
+          await new Promise((r) => setTimeout(r, 15000));
 
           const commentResponse = await fetch(commentApiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: matchKeyword?.comment || "",
+              message: `Hi @${from?.username}, ${replyComment}` || "",
               access_token: accessToken,
             }),
           });
@@ -89,12 +124,14 @@ export async function POST(req: NextRequest) {
 
           const messageApiUrl = `https://graph.instagram.com/v20.0/me/messages`;
 
+          await new Promise((r) => setTimeout(r, 30000));
+
           const messageResponse = await fetch(messageApiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               recipient: { comment_id: commentId },
-              message: { text: matchKeyword?.message || "" },
+              message: { text: `Hi @${from?.username}, ${replyMessage}` || "" },
               access_token: accessToken,
             }),
           });
@@ -106,7 +143,31 @@ export async function POST(req: NextRequest) {
           } else {
             console.log("DM sent successfully ");
           }
+
+          if (commentResponse.ok && messageResponse.ok) {
+              matchKeyword.count = (matchKeyword.count || 0) + 1;
+              await matchKeyword.save();
+
+              const keywordUsage = await KeywordUsage.create({
+                userId: matchKeyword.userId,
+                postId: postId,
+                keywordId: matchKeyword._id,
+                target: {
+                  id: from?.id,
+                  name: from?.username,
+                },
+                platform: "instagram",
+                commentReply: replyComment,
+                messageReply: replyMessage,
+              }); 
+
+              await keywordUsage.save();
+
+
+          }
         }
+      }else {
+        console.log("Change field is not 'comments' or comment is from own account, skipping.");  
       }
     }
 

@@ -10,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import { getCookie } from "@/lib/utils";
 import { useInstagram } from "./InstagramContext";
+import { useUser } from "./UserContext";
 
 const InstagramPostContext = createContext<any | undefined>(undefined);
 
@@ -20,7 +21,7 @@ interface Props {
 export const InstagramPostProvider = ({ children }: Props) => {
   const [posts, setPosts] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const {user} = useInstagram();
+  const {user} = useUser();
 
   const router = useRouter();
 
@@ -51,7 +52,7 @@ export const InstagramPostProvider = ({ children }: Props) => {
     if (!posts && user) {
       fetchPosts();
     }
-  }, [router]);
+  }, [router, user]);
 
   return (
     <InstagramPostContext.Provider value={{ posts, fetchPosts, loading }}>

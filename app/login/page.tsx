@@ -14,7 +14,8 @@ import { auth, facebookProvider, provider } from "@/lib/firebase";
 import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import Image from "next/image";
-
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 function Login() {
   const [form, setForm] = React.useState({ email: "", password: "" });
@@ -54,9 +55,14 @@ function Login() {
 
       const data = await res.json();
 
+      console.log("Login response data:", data);
+
       if (res.ok) {
+        const decodedData:any = jwtDecode(data.token);
+
         localStorage.setItem("token", data?.token);
         localStorage.setItem("email", form?.email || "");
+        Cookies.set("userId", decodedData?.userId || "");
 
         setForm({ email: "", password: "" });
 
@@ -108,12 +114,17 @@ function Login() {
         const responseData = await res.json(); // You can use this data as needed
 
         if(responseData){
-          await fetchUser();
+          fetchUser();
         }
 
 
         localStorage.setItem("token", token);
         localStorage.setItem("email", userData.email);
+        localStorage.setItem("userId", responseData?._id || "");
+        Cookies.set("userId", responseData?._id || "");
+
+
+        
 
         toast.success("Successfully logged in!");
         router.refresh();
@@ -124,6 +135,7 @@ function Login() {
         // Save token and email to localStorage
         localStorage.setItem("token", token);
         localStorage.setItem("email", userData.email);
+        Cookies.set("userId", data?._id || "");
 
         toast.success("Successfully logged in!");
         router.refresh();

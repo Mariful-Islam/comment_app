@@ -29,7 +29,7 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
             <DrawerDescription></DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-6">
-            <div className="mt-3 h-60">
+            <div className="mt-3 h-100">
               <div className="max-w-md border rounded-lg shadow-sm p-4 bg-white">
                 {/* Header: Platform & Status */}
                 <div className="flex justify-between items-center mb-3">
@@ -55,7 +55,7 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
 
                 {/* Post Context */}
                 <div className="bg-gray-50 p-2 rounded text-sm text-gray-600 mb-3 italic">
-                  " {data?.postMessage.substring(0, 60)}... "
+                  " {data?.post?.text.substring(0, 60)}... "
                 </div>
 
                 {/* The Actual Comment */}
@@ -64,11 +64,18 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
                   <div className="text-gray-400 font-medium flex items-center justify-between">
                     Keyword: <span className="text-gray-800">{data?.keyword}</span>
                   </div>
-                  <div className="text-gray-400 font-medium flex items-center justify-between">
-                    Comment Reply: <span className="text-gray-800">{data?.comment}</span>
+                  <div className="text-gray-400 font-medium flex items-center justify-between border-t my-2 py-2">
+                    Comment Reply: <span className="text-gray-800">{data?.comments?.map((cmt: string, i: number)=>(
+                      <div key={i} className="">{i+1}. {cmt}</div>
+                    ))}</span>
                   </div>
-                  <div className="text-gray-400 font-medium flex items-center justify-between">
-                    Message Reply: <span className="text-gray-800">{data?.message}</span>
+                  <div className="text-gray-400 font-medium flex items-center justify-between border-t my-2 py-2">
+                    Message Reply: <span className="text-gray-800">{data?.messages?.map((msg: string, i:number)=>(
+                      <div key={i}>{i+1}. {msg}</div>
+                    ))}</span>
+                  </div>
+                  <div className="text-gray-400 font-medium flex items-center justify-between border-t my-2 py-2">
+                    Reply Count: <span className="text-gray-800">{data?.count}</span>
                   </div>
                 </div>
 

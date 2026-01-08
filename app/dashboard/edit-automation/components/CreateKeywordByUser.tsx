@@ -33,30 +33,26 @@ function CreateKeywordByUser({
 }: CreateKeywordFormProps) {
   const { user } = useUser();
 
-
   const [post, setPost] = useState<any>(null);
 
   const [form, setForm] = React.useState({
     userId: user?._id,
-    postId: "",
-    postMessage: "",
+    post: { id: "", text: "" },
     platform: "",
     keyword: "",
-    comment: "",
-    message: "",
+    comments: [""],
+    messages: [""],
   });
 
   const [error, setError] = useState<any>(null);
-  const {user: fbUser} = useFacebook();
-  const {user: instaUser} = useInstagram();
-
+  const { user: fbUser } = useFacebook();
+  const { user: instaUser } = useInstagram();
 
   useEffect(() => {
     if (post) {
       setForm((prev: any) => ({
         ...prev,
-        postId: post?.id,
-        postMessage: form?.platform==="facebook" ? post?.message : post?.caption,
+        post: { id: post?.id, text: post?.message || post?.caption },
       }));
     }
   }, [post]);
@@ -94,10 +90,9 @@ function CreateKeywordByUser({
         setForm({
           userId: "",
           keyword: "",
-          comment: "",
-          message: "",
-          postId: post?.id,
-          postMessage: "",
+          comments: [""],
+          messages: [""],
+          post: { id: "", text: "" },
           platform: "",
         });
       } else {
@@ -113,21 +108,18 @@ function CreateKeywordByUser({
   };
 
   const [isOpenPageSelector, setIsOpenPageSelector] = useState<boolean>(false);
-  const [isOpenInstaPostSelector, setIsOpenInstaPostSelector] = useState<boolean>(false);
+  const [isOpenInstaPostSelector, setIsOpenInstaPostSelector] =
+    useState<boolean>(false);
 
   const handlePageSelect = (e: any) => {
     e.preventDefault();
     setIsOpenPageSelector(!isOpenPageSelector);
   };
 
-
-  const removePost = (e:any) => {
-    e.preventDefault()
-    setPost(null)
-  }
-
-
-
+  const removePost = (e: any) => {
+    e.preventDefault();
+    setPost(null);
+  };
 
   // create options for platform selection if both fbUser and instaUser exist
   const platformOptions = [];
@@ -136,20 +128,20 @@ function CreateKeywordByUser({
   }
   if (instaUser) {
     platformOptions.push("instagram");
-  } 
-
-
-
+  }
 
   useEffect(() => {
-    if(form?.platform === "facebook" ){
-      setIsOpenPageSelector(true)
+    if (form?.platform === "facebook") {
+      setIsOpenPageSelector(true);
     }
 
-    if(form?.platform === "instagram" ){
-      setIsOpenInstaPostSelector(true)
+    if (form?.platform === "instagram") {
+      setIsOpenInstaPostSelector(true);
     }
   }, [form?.platform.length]);
+
+
+  console.log("form", form);
 
   return (
     <Dialog open={isOpen} onOpenChange={onclose}>
@@ -157,7 +149,7 @@ function CreateKeywordByUser({
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
       </DialogHeader>
-      <DialogContent className="z-70">
+      <DialogContent className="z-70 max-h-screen overflow-y-auto">
         <h1 className="text-2xl font-bold mb-4 z-auto">Create Keyword</h1>
 
         <form onSubmit={handleSubmit}>
@@ -165,17 +157,18 @@ function CreateKeywordByUser({
             <div>
               {platformOptions?.length > 0 && (
                 <div className="mb-4">
-                  <Label htmlFor="platform" >Platform</Label>
+                  <Label htmlFor="platform">Platform</Label>
                   <select
                     id="platform"
                     name="platform"
-                    value={form.platform  || "" } 
-                    onChange={(e)=>{
+                    value={form.platform || ""}
+                    onChange={(e) => {
                       e.preventDefault();
                       setForm((prev: any) => ({
-                      ...prev,
-                      platform: e.target.value,
-                    }))}}
+                        ...prev,
+                        platform: e.target.value,
+                      }));
+                    }}
                     className="w-full border border-gray-300 rounded-md p-2 mt-4"
                   >
                     <option value="" disabled>
@@ -188,7 +181,7 @@ function CreateKeywordByUser({
                     ))}
                   </select>
                 </div>
-              )}  
+              )}
             </div>
 
             {isOpenPageSelector && (
@@ -207,16 +200,18 @@ function CreateKeywordByUser({
               />
             )}
 
-            
-
             {post && (
               <div className="mt-6">
                 <div className="font-bold">Selected Post</div>
                 <div className="flex justify-end">
-                  <Button variant={`link`} onClick={removePost}><RxCross1 className="text-red-500"/></Button>
+                  <Button variant={`link`} onClick={removePost}>
+                    <RxCross1 className="text-red-500" />
+                  </Button>
                 </div>
                 <div className="p-4 border border-blue-500 rounded-md w-full ">
-                  {form?.platform === "facebook" ? post?.message : post?.caption}
+                  {form?.platform === "facebook"
+                    ? post?.message
+                    : post?.caption}
                 </div>
               </div>
             )}
@@ -234,26 +229,123 @@ function CreateKeywordByUser({
             />
           </div>
           <div className="flex flex-col gap-4 mt-6">
-            <Label htmlFor="comment">Comment</Label>
-            <Input
+            <Label htmlFor="comment">Comments</Label>
+            {/* <Input
               type="text"
               id="comment"
               placeholder="comment"
               name="comment"
-              value={form?.comment || ""}
+              value={form?.comments || ""}
               onChange={handleChange}
-            />
+            /> */}
+
+            {form?.comments &&
+              form.comments?.map((cmt: any, idx: number) => (
+                <div key={idx} className="mt-2 p-2 bg-gray-100 rounded-md">
+                  <Input
+                    type="text"
+                    placeholder={`Comment ${idx + 1}`}
+                    value={cmt}
+                    onChange={(e) => {
+                      const newComments = [...form.comments];
+                      newComments[idx] = e.target.value;
+                      setForm((prev: any) => ({
+                        ...prev,
+                        comments: newComments,
+                      }));
+                    }}
+                  />
+                  <Button
+                    variant="link"
+                    className="text-red-500 mt-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const newComments = form.comments.filter(
+                        (_: any, index: number) => index !== idx
+                      );
+                      setForm((prev: any) => ({
+                        ...prev,
+                        comments: newComments,
+                      }));
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={(e) => {
+                e.preventDefault();
+                setForm((prev: any) => ({
+                  ...prev,
+                  comments: [...prev.comments, ""],
+                }));
+              }}
+            >
+              Add Comment
+            </Button>
           </div>
           <div className="flex flex-col gap-4 mt-6">
-            <Label htmlFor="message">Message</Label>
-            <Input
+            <Label htmlFor="message">Messages</Label>
+            {/* <Input
               type="text"
               id="message"
               placeholder="Message"
               name="message"
-              value={form?.message || ""}
+              value={form?.messages || ""}
               onChange={handleChange}
-            />
+            /> */}
+
+            {form?.messages &&
+              form.messages?.map((msg: any, idx: number) => (
+                <div key={idx} className="mt-2 p-2 bg-gray-100 rounded-md">
+                  <Input
+                    type="text"
+                    placeholder={`Message ${idx + 1}`}
+                    value={msg}
+                    onChange={(e) => {
+                      const newMessages = [...form.messages];
+                      newMessages[idx] = e.target.value;
+                      setForm((prev: any) => ({
+                        ...prev,
+                        messages: newMessages,
+                      }));
+                    }}
+                  />
+                  <Button
+                    variant="link"
+                    className="text-red-500 mt-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const newMessages = form.messages.filter(
+                        (_: any, index: number) => index !== idx
+                      );
+                      setForm((prev: any) => ({
+                        ...prev,
+                        messages: newMessages,
+                      }));
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={(e) => {
+                e.preventDefault();
+                setForm((prev: any) => ({
+                  ...prev,
+                  messages: [...prev.messages, ""],
+                }));
+              }}
+            >
+              Add Message
+            </Button>
           </div>
 
           {error && <div className="text-red-500 text-sm mt-12">{error}</div>}

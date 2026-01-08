@@ -6,17 +6,18 @@ export async function POST(req: Request) {
   try {
     await connectToDB();
 
-    const { userId, postId, postMessage, platform, keyword, comment, message } = await req.json();
+    const { userId, post, platform, keyword, comments, messages } = await req.json();
 
 
-    if (!userId || !postId || !postMessage || !platform || !keyword || !comment || !message) {
+    if (!userId || !post || !platform || !keyword || !comments || !messages) {
       return NextResponse.json(
         { message: 'All fields are required.' },
         { status: 400 }
       );
     }
 
-    const newKeyword = await Keyword.create({ userId, postId, postMessage, platform, keyword, comment, message });
+    const newKeyword = await Keyword.create({ userId, post: {id: post?.id, text: post?.text }, platform, keyword, comments, messages, count: 0 });
+    await newKeyword.save();
 
     return NextResponse.json(newKeyword, { status: 201 });
   } catch (error: any) {

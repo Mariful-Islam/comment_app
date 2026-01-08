@@ -82,13 +82,7 @@ function CommentKeyword() {
   };
 
   const columns: ColumnDef<any>[] = [
-    // {
-    //   accessorKey: "_id",
-    //   header: "",
-    //   cell: ({ row }: any) => {
-    //     return <>{/* {row?.getValue("postMessage")} */}</>;
-    //   },
-    // },
+
 
     {
       accessorKey: "platform",
@@ -109,7 +103,7 @@ function CommentKeyword() {
       cell: ({ row }: any) => {
         return (
           <div className="max-w-full min-w-12 break-all text-wrap line-clamp-2">
-            {row?.getValue("postMessage")}
+            {row?.original?.post?.text || "No content available"}
           </div>
         );
       },
@@ -119,26 +113,6 @@ function CommentKeyword() {
       header: "Keyword",
       cell: ({ row }: any) => <div>{row?.getValue('keyword')}</div>,
     },
-    // {
-    //   accessorKey: "comment",
-    //   header: "",
-    //   cell: ({ row }: any) => <div></div>,
-    // },
-    // {
-    //   accessorKey: "message",
-    //   header: "",
-    //   cell: ({ row }: any) => (
-    //     <>
-
-    //     </>
-    //   ),
-    // },
-    // {
-    //   accessorKey: "userId",
-    //   header: "",
-    //   cell: ({ row }: any) => <>{/* {row?.getValue("userId")} */}</>,
-    // },
-
 
 
     {

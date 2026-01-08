@@ -191,9 +191,16 @@ function Pages() {
     }
   };
 
+
+  useEffect(() => {
+    if(!user){
+      router.push('/')
+    }
+  }, [user]);
+
   return (
     <Layout>
-      <div className="max-w-[1200px] mx-auto mt-5">
+      <div className="max-w-300 mx-auto mt-5">
         <h1 className="text-xl font-bold mb-4">Facebook Pages</h1>
 
         {loading ? (

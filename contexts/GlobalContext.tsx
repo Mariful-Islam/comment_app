@@ -6,6 +6,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import Cookies from "js-cookie";
 
 export const GlobalContext = createContext<any>(null);
 
@@ -87,6 +88,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const handleLogout = async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
+    Cookies.remove("userId");
     await signOut(auth);
     router.refresh();
     router.replace("/login");

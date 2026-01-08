@@ -19,7 +19,7 @@ function DeleteKeywordByUser({isOpen, onClose, keyword, refreshKeywords }: Delet
     const handleDelete = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/keywords/${keyword.getValue(`_id`)}`, {
+            const res = await fetch(`/api/keywords/${keyword?._id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

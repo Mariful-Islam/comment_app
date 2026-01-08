@@ -26,6 +26,12 @@ function Posts() {
 
   const {posts, fetchPosts, loading} = useInstagramPost()
 
+  useEffect(() => {
+      if(!user){
+        router.push('/')
+      }
+  }, [user]);
+
   return (
     <Layout>
       <div className="max-w-300 mx-auto mt-5">
