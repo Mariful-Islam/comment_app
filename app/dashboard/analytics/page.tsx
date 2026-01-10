@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Layout from "@/layout/Layout";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { TfiArrowTopRight } from "react-icons/tfi";
 
@@ -9,8 +10,11 @@ import { TfiArrowTopRight } from "react-icons/tfi";
 function Analytics() {
     const [data, setData] = useState<any>(null);
 
+    const today = moment(new Date()).format('YYYY-MM-DD')
+    const weekDaysAgo = moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
+
     const fetchData = async () => {
-        const response = await fetch('/api/analytics/card', {
+        const response = await fetch(`/api/analytics/card?start=${today}&end=${weekDaysAgo}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -24,7 +28,6 @@ function Analytics() {
             throw new Error('Failed to fetch analytics data');
         }
 
-        return response.json();
     };
 
     useEffect(() => {   
@@ -48,7 +51,7 @@ function Analytics() {
                     <CardContent>
                         <div className="flex justify-between">
                             <div className="text-[40px] font-bold">
-                                {data ? data.facebookReplyCount : '...'}
+                                {data ? data.facebook : '...'}
                             </div>
                             <Button variant={`outline`} className="rounded-full h-10 w-10 flex justify-center items-center">
                                 <TfiArrowTopRight />
@@ -69,7 +72,7 @@ function Analytics() {
                     <CardContent>
                         <div className="flex justify-between">
                             <div className="text-[40px] font-bold">
-                                {data ? data.instagramReplyCount : '...'}
+                                {data ? data.instagram : '...'}
                             </div>
                             <Button variant={`outline`} className="rounded-full h-10 w-10 flex justify-center items-center">
                                 <TfiArrowTopRight />

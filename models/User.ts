@@ -1,5 +1,5 @@
 // /lib/models/User.ts
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IUser extends Document {
   name?: string;
@@ -7,7 +7,10 @@ export interface IUser extends Document {
   password: string;
   imageUrl?: string;
   authProvider: "email" | "google" | "facebook";
-
+  isFreeTrial: {
+    facebook: { startDate: Date; endDate: Date };
+    instagram: { startDate: Date; endDate: Date };
+  };
 }
 
 const userSchema = new Schema<IUser>(
@@ -16,10 +19,24 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     imageUrl: { type: String },
-    authProvider: { type: String, enum: ["email", "google", "facebook"], default: "email" },
-
+    authProvider: {
+      type: String,
+      enum: ["email", "google", "facebook"],
+      default: "email",
+    },
+    isFreeTrial: {
+      facebook: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+      },
+      instagram: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+      },
+    },
   },
   { timestamps: true }
 );
 
-export const User = mongoose.models.User || mongoose.model<IUser>('User', userSchema);
+export const User =
+  mongoose.models.User || mongoose.model<IUser>("User", userSchema);

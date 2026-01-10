@@ -12,6 +12,7 @@ import { FacebookPageProvider } from "@/contexts/FacebookPageContext";
 import { InstagramProvider } from "@/contexts/InstagramContext";
 import { InstagramPostProvider } from "@/contexts/InstagramPostContext";
 import { KeywordProvider } from "@/contexts/KeywordContext";
+import { KeywordUsageProvider } from "@/contexts/KeywordUsageContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,9 +43,11 @@ export default function RootLayout({
                     <InstagramProvider>
                       <InstagramPostProvider>
                         <KeywordProvider>
-                          {children}
+                          <KeywordUsageProvider>
+                            {children}
 
-                          <Toaster />
+                            <Toaster />
+                          </KeywordUsageProvider>
                         </KeywordProvider>
                       </InstagramPostProvider>
                     </InstagramProvider>

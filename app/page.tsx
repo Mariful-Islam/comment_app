@@ -20,7 +20,7 @@ import FacebookToken from "@/components/FacebookToken";
 import FacebookInfo from "@/components/FacebookInfo";
 import { useFacebookLogin } from "@/hooks/useFacebookLogin";
 import InstagramInfo from "@/components/InstagramInfo";
-
+import Cookies from "js-cookie";
 
 type UserType = {
   name: string;

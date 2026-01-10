@@ -66,9 +66,6 @@ export async function POST(request: NextRequest) {
           console.log("Matched Keyword Entry:", keywordEntry);
           
 
-          // const replyMessage =
-          //   keywordEntry?.message || "Thank you for your comment!";
-          // const replyComment = keywordEntry?.comment;
 
 
           let replyComment = "Thanks for reaching out!";
@@ -132,9 +129,12 @@ export async function POST(request: NextRequest) {
               await keywordEntry.save();
 
               const keywordUsage = await KeywordUsage.create({
-                userId: keywordEntry.userId,
+                userId: keywordEntry?.userId,
                 postId: post_id,
-                keywordId: keywordEntry._id,
+                keyword: {
+                  id: keywordEntry?._id,
+                  text: keywordEntry?.keyword,
+                },
                 target: {
                   id: from?.id,
                   name: from?.name,

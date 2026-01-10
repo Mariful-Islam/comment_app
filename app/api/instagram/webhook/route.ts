@@ -151,7 +151,10 @@ export async function POST(req: NextRequest) {
               const keywordUsage = await KeywordUsage.create({
                 userId: matchKeyword.userId,
                 postId: postId,
-                keywordId: matchKeyword._id,
+                keyword: {
+                  id: matchKeyword._id,
+                  text: matchKeyword.keyword,
+                },
                 target: {
                   id: from?.id,
                   name: from?.username,
