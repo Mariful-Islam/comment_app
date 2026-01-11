@@ -164,7 +164,7 @@ export function DataTable<TData, TValue>({
           {Object.keys(rowSelection).length} row(s) selected
         </div>
 
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
@@ -181,7 +181,7 @@ export function DataTable<TData, TValue>({
           >
             Next
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   )

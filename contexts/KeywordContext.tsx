@@ -24,10 +24,10 @@ export const KeywordProvider = ({ children }: Props) => {
     const [loading, setLoading] = useState(true);
   // Optional: fetch token and user on mount
 
-  const fetchKeywords = async () => {
+  const fetchKeywords = async (page?: number) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/keywords/users/${user?._id}`, {
+      const res = await fetch(`/api/keywords/users/${user?._id}?page=${page || 1}`, {
         cache: "no-cache",
       });
 
