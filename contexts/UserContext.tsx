@@ -11,6 +11,7 @@ type UserType = {
   imageUrl?: string;
   createdAt: string;
   authProvider?: string;
+  isFreeTrial?: any;
 };
 
 type UserContextType = {
@@ -62,9 +63,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const fetchFacebookConnection = async () => {
-    const res = await fetch(`/api/facebook`)
-  }
+
 
   useEffect(() => {
     if(!user){

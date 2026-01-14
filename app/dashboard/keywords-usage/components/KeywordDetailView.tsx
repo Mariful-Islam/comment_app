@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
@@ -13,7 +14,6 @@ interface KeywordDetailViewProps {
 }
 
 function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
-  
   return (
     <Drawer open={isOpen} onClose={onClose}>
       <DrawerContent title="Keyword Usage Detail">
@@ -22,23 +22,61 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
             <h2 className="text-xl font-semibold">Keyword Usage Detail</h2>
           </DrawerTitle>
         </DrawerHeader>
-        <div className="p-4 space-y-4 mx-auto w-full max-w-md">
-          <div>
-            <h2 className="text-lg font-semibold">Keyword:</h2>
-            <p>{data?.keyword?.text || "N/A"}</p>
+        <div className="p-6 space-y-6 mx-auto min-w-100">
+          <div className="border-b pb-4">
+            <p className="text-sm text-gray-500 uppercase tracking-wide">
+              Keyword
+            </p>
+            <p className="text-lg font-medium text-gray-900 mt-1">
+              {data?.keyword?.text || "—"}
+            </p>
+          </div>
+          <div className="border-b pb-4">
+            <p className="text-sm text-gray-500 uppercase tracking-wide">
+              Target
+            </p>
+            <p className="text-lg font-medium text-gray-900 mt-1">
+              {data?.target?.name || "—"}
+            </p>
+          </div>
+          <div className="border-b pb-4">
+            <p className="text-sm text-gray-500 uppercase tracking-wide">
+              Post ID
+            </p>
+            <p className="text-lg font-medium text-gray-900 mt-1">
+              {data?.postId || "—"}
+            </p>
+          </div>
+          <div className="border-b pb-4">
+            <p className="text-sm text-gray-500 uppercase tracking-wide">
+              Comment Reply
+            </p>
+            <p className="text-lg font-medium text-gray-900 mt-1">
+              {data?.commentReply || "—"}
+            </p>
+          </div>
+          <div className="border-b pb-4">
+            <p className="text-sm text-gray-500 uppercase tracking-wide">
+              Message Reply
+            </p>
+            <p className="text-lg font-medium text-gray-900 mt-1">
+              {data?.messageReply || "—"}
+            </p>
           </div>
           <div>
-            <h2 className="text-lg font-semibold">Target Name:</h2>
-            <p>{data?.target?.name || "N/A"}</p>
+            <p className="text-sm text-gray-500 uppercase tracking-wide">
+              Date Used
+            </p>
+            <p className="text-lg font-medium text-gray-900 mt-1">
+              {data?.createdAt
+                ? new Date(data.createdAt).toLocaleString()
+                : "—"}
+            </p>
           </div>
-          <div>
-            <h2 className="text-lg font-semibold">Post ID:</h2>
-            <p>{data?.postId || "N/A"}</p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold">Date Used:</h2>
-            <p>{new Date(data?.createdAt).toLocaleString() || "N/A"}</p>
-          </div>
+
+          <Button onClick={onClose} variant={`outline`} className="w-full">
+            Close
+          </Button>
         </div>
       </DrawerContent>
     </Drawer>

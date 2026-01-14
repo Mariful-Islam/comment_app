@@ -52,7 +52,7 @@ export const KeywordProvider = ({ children }: Props) => {
     if (!keywords && user) {
       fetchKeywords();
     }
-  }, [user]);
+  }, [user, keywords]);
 
   return (
     <KeywordContext.Provider value={{ keywords, fetchKeywords, loading }}>

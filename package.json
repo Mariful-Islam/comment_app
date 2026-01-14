@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "npx tsx --env-file=.env.local scripts/seed.ts"
+    "seedSubscriptions": "tsx seedSubscriptions.ts"
   },
   "dependencies": {
     "@greatsumini/react-facebook-login": "^3.4.0",
@@ -23,6 +23,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "firebase": "^12.3.0",
+    "framer-motion": "^12.29.0",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",

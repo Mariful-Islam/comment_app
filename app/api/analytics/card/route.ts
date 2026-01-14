@@ -36,34 +36,63 @@ export async function GET(request: NextRequest) {
     /**
      * 2. DATE FILTERING
      */
+    // if (start || end) {
+    //   // Initialize the createdAt object
+    //   matchQuery.createdAt = {};
+
+    //   if (start) {
+    //     const startDate = new Date(start); // Convert string "2026-01-10" to Date object
+    //     if (!isNaN(startDate.getTime())) {
+    //       // Set to start of day (00:00:00)
+    //       startDate.setUTCHours(0, 0, 0, 0);
+    //       matchQuery.createdAt.$gte = startDate.toISOString()
+    //     }
+    //   }
+
+    //   if (end) {
+    //     const endDate = new Date(end);
+    //     if (!isNaN(endDate.getTime())) {
+    //       // Set to end of day (23:59:59)
+    //       endDate.setUTCHours(23, 59, 59, 999);
+    //       matchQuery.createdAt.$lte = endDate.toISOString()
+    //     }
+    //   }
+
+    //   // CRITICAL: If start/end were invalid, remove the empty createdAt object
+    //   if (Object.keys(matchQuery.createdAt).length === 0) {
+    //     delete matchQuery.createdAt;
+    //   }
+    // }
+    
+
+    /**
+     * 2. DATE FILTERING
+     */
     if (start || end) {
-      // Initialize the createdAt object
       matchQuery.createdAt = {};
 
       if (start) {
-        const startDate = new Date(start); // Convert string "2026-01-10" to Date object
+        const startDate = new Date(start);
         if (!isNaN(startDate.getTime())) {
-          // Set to start of day (00:00:00)
           startDate.setUTCHours(0, 0, 0, 0);
-          matchQuery.createdAt.$gte = startDate.toISOString().replace('Z', '+00:00');
+          // Pass the Date object directly, NOT .toISOString()
+          matchQuery.createdAt.$gte = startDate; 
         }
       }
 
       if (end) {
         const endDate = new Date(end);
         if (!isNaN(endDate.getTime())) {
-          // Set to end of day (23:59:59)
           endDate.setUTCHours(23, 59, 59, 999);
-          matchQuery.createdAt.$lte = endDate.toISOString().replace('Z', '+00:00');
+          // Pass the Date object directly, NOT .toISOString()
+          matchQuery.createdAt.$lte = endDate;
         }
       }
 
-      // CRITICAL: If start/end were invalid, remove the empty createdAt object
       if (Object.keys(matchQuery.createdAt).length === 0) {
         delete matchQuery.createdAt;
       }
     }
-    
 
 
     console.log("Final Match Query:", JSON.stringify(matchQuery, null, 2));

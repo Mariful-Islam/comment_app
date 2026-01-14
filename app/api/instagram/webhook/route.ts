@@ -1,5 +1,6 @@
 import { Keyword } from "@/models/Keyword";
 import { KeywordUsage } from "@/models/KeywordUsage";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { text } from "stream/consumers";
 
@@ -40,6 +41,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "No changes found" }, { status: 200 });
     }
 
+    // if(new Date(user.isFreeTrial.facebook.endDate) <= new Date()){
+
     for (const change of entry.changes) {
       // 2. Ensure we are handling a comment field
       console.log("Processing change:", entry.id,);
@@ -69,8 +72,8 @@ export async function POST(req: NextRequest) {
 
         console.log("Matched Keyword:", matchKeyword);
 
-
-        const accessToken = "IGAALoV9MO92xBZAFpzUFVuTWczZA2tZAeTk5MElYOWtjaFk4S1YtQjFUbWJMM1N1T0ZAUY2gwcEV0cUl3MzNwNkhXU2VvcDZAydGw5QVhnVFpKVVdBOUJWMlhkUzlyamJ2RGg0TXlmbl9jZATJPaV9BMmlBTjBVajhqRE9QRFZA4X3hJOAZDZD"
+        const cookieStore = cookies()
+        const accessToken = (await cookieStore).get('insta_access_token')
         
         // Note: Graph API v23.0 is a future version; usually, you'll use the current stable (v18.0 - v20.0)
 

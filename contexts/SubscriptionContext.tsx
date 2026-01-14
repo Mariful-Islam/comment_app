@@ -10,29 +10,29 @@ import { useRouter } from "next/navigation";
 import { getCookie } from "@/lib/utils";
 import { useUser } from "./UserContext";
 
-const KeywordUsageContext = createContext<any | undefined>(undefined);
+const SubscriptionContext = createContext<any | undefined>(undefined);
 
 interface Props {
   children: ReactNode;
 }
 
-export const KeywordUsageProvider = ({ children }: Props) => {
+export const SubscriptionProvider = ({ children }: Props) => {
   const router = useRouter();
   const {user} = useUser()
 
-    const [KeywordUsages, setKeywordUsages] = useState<any[] | null>(null);
+    const [subscriptions, setSubscriptions] = useState<any[] | null>(null);
     const [loading, setLoading] = useState(true);
   // Optional: fetch token and user on mount
 
-  const fetchKeywordUsages = async (page?:number) => {
+  const fetchSubscriptions = async (page?:number) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/keywords/usage?page=${page || 1}`, {credentials: 'include',});
+      const res = await fetch(`/api/subscriptions?page=${page || 1}`, {credentials: 'include',});
 
       const data = await res.json();
 
       if (data) {
-        setKeywordUsages(data);
+        setSubscriptions(data);
         setLoading(false);
       } else {
         console.error("Error in response:", data);
@@ -47,23 +47,23 @@ export const KeywordUsageProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    if (!KeywordUsages && user) {
-      fetchKeywordUsages();
+    if (!subscriptions && user) {
+      fetchSubscriptions();
     }
-  }, [user, KeywordUsages]);
+  }, [subscriptions, user]);
 
   return (
-    <KeywordUsageContext.Provider value={{ KeywordUsages, fetchKeywordUsages, loading }}>
+    <SubscriptionContext.Provider value={{ subscriptions, fetchSubscriptions, loading }}>
       {children}
-    </KeywordUsageContext.Provider>
+    </SubscriptionContext.Provider>
   );
 };
 
 // Custom hook for easier consumption
-export const useKeywordUsage = (): any => {
-  const context = useContext(KeywordUsageContext);
+export const useSubscription = (): any => {
+  const context = useContext(SubscriptionContext);
   if (!context) {
-    throw new Error("useKeywordUsage must be used within a KeywordUsageProvider");
+    throw new Error("useSubscription must be used within a SubscriptionProvider");
   }
   return context;
 };

@@ -161,21 +161,37 @@ function CommentKeyword() {
     },
   ];
 
-
-
+ 
 
   return (
     <Layout>
       <div className="max-w-300 mx-auto mt-5 text-sm sm:text-md">
         <div className="flex items-center justify-between gap-2 mb-4">
           <h1 className="text-xl font-bold">Keyword</h1>
-          <Button
+          {/* <Button
             variant="outline"
             onClick={() => fetchKeywords()}
             disabled={loading}
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          </Button> */}
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              fetchKeywords();
+            }}
+            disabled={loading}
+          >
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+            />
+            Refresh
           </Button>
+
+
+          
         </div>
 
         <div className="flex justify-end my-6">

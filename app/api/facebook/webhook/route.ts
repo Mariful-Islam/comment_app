@@ -1,8 +1,10 @@
 import Token from "@/components/Token";
+import { connectToDB } from "@/lib/mongodb";
 import { Facebook } from "@/models/Facebook";
 import { FacebookPage } from "@/models/FacebookPage";
 import { Keyword } from "@/models/Keyword";
 import { KeywordUsage } from "@/models/KeywordUsage";
+import { User } from "@/models/User";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -24,132 +26,173 @@ export async function GET(request: NextRequest) {
   }
 }
 
-
-
 export async function POST(request: NextRequest) {
+  let pageAccessToken = null
+
   try {
-    const body = await request.json();
-    console.log("📬 Webhook event:");
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
 
-    for (const entry of body.entry ?? []) {
-      const pageId = entry?.id;
+    await connectToDB();
 
-      // 🔑 Get Page Access Token from DB
-      const pageRecord = await FacebookPage.findOne({ id: pageId });
+    const user = await User.findOne({ _id: userId });
 
-      if (!pageRecord) {
-        console.warn(`⚠️ No page token stored for page ${pageId}`);
-        continue;
-      }
+    if (new Date(user.isFreeTrial.facebook.endDate) <= new Date()) {
+      const body = await request.json();
+      console.log("📬 Webhook event:");
 
-      const pageAccessToken = pageRecord.pageAccessToken;
+      for (const entry of body.entry ?? []) {
+        const pageId = entry?.id;
 
-      for (const change of entry.changes ?? []) {
-        if (
-          change.field === "feed" &&
-          change.value?.item === "comment" &&
-          change.value?.from?.id !== pageId
-        ) {
-          const { comment_id, post_id, message, sender_id, from } = change.value;
+        // 🔑 Get Page Access Token from DB
+        const pageRecord = await FacebookPage.findOne({ id: pageId });
 
+        if (!pageRecord) {
+          console.warn(`⚠️ No page token stored for page ${pageId}`);
+          continue;
+        }
 
+        pageAccessToken = pageRecord.pageAccessToken;
 
-          console.log(`New comment on post ${post_id}: ${message} (Comment ID: ${comment_id})`);
+        for (const change of entry.changes ?? []) {
+          if (
+            change.field === "feed" &&
+            change.value?.item === "comment" &&
+            change.value?.from?.id !== pageId
+          ) {
+            const { comment_id, post_id, message, sender_id, from } =
+              change.value;
 
-          const words = message.trim().split(/\s+/).map((w:any) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')); // escape regex chars
-    
-          const regex = new RegExp(`\\b(${words.join('|')})\\b`, 'i');
-  
-          const keywordEntry = await Keyword.findOne({ "post.id": post_id, keyword: { $regex: regex } });
-
-
-          console.log("Matched Keyword Entry:", keywordEntry);
-          
-
-
-
-          let replyComment = "Thanks for reaching out!";
-          let replyMessage = "Thank you for your comment!";
-
-          if (keywordEntry?.isActive) {
-            // Randomly pick from the comments array
-            if (keywordEntry?.comments && keywordEntry?.comments?.length > 0) {
-              const randomCommentIdx = Math.floor(Math.random() * keywordEntry?.comments?.length);
-              replyComment = keywordEntry.comments[randomCommentIdx];
-            }
-
-            // Randomly pick from the messages array
-            if (keywordEntry?.messages && keywordEntry?.messages?.length > 0) {
-              const randomMessageIdx = Math.floor(Math.random() * keywordEntry?.messages?.length);
-              replyMessage = keywordEntry?.messages[randomMessageIdx];
-            }
-          }
-
-          // 📨 Private reply (Inbox)
-          if (replyComment && replyMessage && comment_id && keywordEntry?.isActive) {
-
-            await new Promise((r) => setTimeout(r, 15000)); // slight delay to ensure comment is posted before replying
-            
-            const commentRes = await fetch(
-              `https://graph.facebook.com/v23.0/${comment_id}/comments?access_token=${pageAccessToken}`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: `Hi ${from?.name}, ${replyComment}` }),
-              }
+            console.log(
+              `New comment on post ${post_id}: ${message} (Comment ID: ${comment_id})`
             );
 
-            if(commentRes.ok) { 
-              console.log("💬 Comment reply sent")
-            } ;
+            const words = message
+              .trim()
+              .split(/\s+/)
+              .map((w: any) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")); // escape regex chars
 
+            const regex = new RegExp(`\\b(${words.join("|")})\\b`, "i");
 
-            await new Promise((r) => setTimeout(r, 30000));
-            
-            const messageRes = await fetch(
-              `https://graph.facebook.com/v23.0/me/messages?access_token=${pageAccessToken}`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  recipient: { comment_id },
-                  message: { text: `Hi ${from?.name}, ${replyMessage}` },
-                }),
+            const keywordEntry = await Keyword.findOne({
+              "post.id": post_id,
+              keyword: { $regex: regex },
+            });
+
+            console.log("Matched Keyword Entry:", keywordEntry);
+
+            let replyComment = "Thanks for reaching out!";
+            let replyMessage = "Thank you for your comment!";
+
+            if (keywordEntry?.isActive) {
+              // Randomly pick from the comments array
+              if (
+                keywordEntry?.comments &&
+                keywordEntry?.comments?.length > 0
+              ) {
+                const randomCommentIdx = Math.floor(
+                  Math.random() * keywordEntry?.comments?.length
+                );
+                replyComment = keywordEntry.comments[randomCommentIdx];
               }
-            );
 
-            if(messageRes.ok) {
-              console.log("✉️  Message reply sent")
+              // Randomly pick from the messages array
+              if (
+                keywordEntry?.messages &&
+                keywordEntry?.messages?.length > 0
+              ) {
+                const randomMessageIdx = Math.floor(
+                  Math.random() * keywordEntry?.messages?.length
+                );
+                replyMessage = keywordEntry?.messages[randomMessageIdx];
+              }
             }
 
+            // 📨 Private reply (Inbox)
+            if (
+              replyComment &&
+              replyMessage &&
+              comment_id &&
+              keywordEntry?.isActive
+            ) {
+              await new Promise((r) => setTimeout(r, 15000)); // slight delay to ensure comment is posted before replying
 
-            if (commentRes.ok && messageRes.ok) {
-              const messageData = await messageRes.json();
-              keywordEntry.count = (keywordEntry.count || 0) + 1;
-              await keywordEntry.save();
+              const commentRes = await fetch(
+                `https://graph.facebook.com/v23.0/${comment_id}/comments?access_token=${pageAccessToken}`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    message: `Hi ${from?.name}, ${replyComment}`,
+                  }),
+                }
+              );
 
-              const keywordUsage = await KeywordUsage.create({
-                userId: keywordEntry?.userId,
-                postId: post_id,
-                keyword: {
-                  id: keywordEntry?._id,
-                  text: keywordEntry?.keyword,
-                },
-                target: {
-                  id: from?.id,
-                  name: from?.name,
-                },
-                platform: "facebook",
-                commentReply: replyComment,
-                messageReply: replyMessage,
-              });
+              if (commentRes.ok) {
+                console.log("💬 Comment reply sent");
+              }
 
-              await keywordUsage.save();
+              await new Promise((r) => setTimeout(r, 30000));
 
+              const messageRes = await fetch(
+                `https://graph.facebook.com/v23.0/me/messages?access_token=${pageAccessToken}`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    recipient: { comment_id },
+                    message: { text: `Hi ${from?.name}, ${replyMessage}` },
+                  }),
+                }
+              );
+
+              if (messageRes.ok) {
+                console.log("✉️  Message reply sent");
+              }
+
+              if (commentRes.ok && messageRes.ok) {
+                const messageData = await messageRes.json();
+                keywordEntry.count = (keywordEntry.count || 0) + 1;
+                await keywordEntry.save();
+
+                const keywordUsage = await KeywordUsage.create({
+                  userId: keywordEntry?.userId,
+                  postId: post_id,
+                  keyword: {
+                    id: keywordEntry?._id,
+                    text: keywordEntry?.keyword,
+                  },
+                  target: {
+                    id: from?.id,
+                    name: from?.name,
+                  },
+                  platform: "facebook",
+                  commentReply: replyComment,
+                  messageReply: replyMessage,
+                });
+
+                await keywordUsage.save();
+              }
             }
           }
         }
       }
+    } else {
+      const response = await fetch(
+        `https://graph.facebook.com/v23.0/me/subscribed_apps`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            access_token: pageAccessToken,
+            subscribed_fields: ["feed"],
+          }),
+        }
+      );
+
+      const data = await response.json();
     }
 
     return NextResponse.json({ status: "EVENT_RECEIVED" });

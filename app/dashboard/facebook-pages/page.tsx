@@ -4,12 +4,11 @@ import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { set } from "mongoose";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { get } from "http";
 import { useFacebook } from "@/contexts/FacebookContext";
+import { toast } from "sonner";
 
 function Pages() {
   const [pages, setPages] = useState<any[]>([]);
@@ -24,9 +23,8 @@ function Pages() {
 
   const router = useRouter();
 
-  const {user, token} = useFacebook()
-
-
+  const { user, token } = useFacebook();
+  const [message, setMessage] = useState<any>(null);
 
   const getPages = async () => {
     setLoading(true);
@@ -69,9 +67,6 @@ function Pages() {
     }
   };
 
-
-
-  
   // ✅ Function to check subscription status
   const isSubscribedPages = async (accessToken: string): Promise<boolean> => {
     if (!accessToken) {
@@ -112,37 +107,95 @@ function Pages() {
     getPages();
   }, [token, router]);
 
-  const addFeedSubscription = async (accessToken: string) => {
+  const addFeedSubscription = async (page: any) => {
     try {
-      const response = await fetch(
-        `https://graph.facebook.com/v23.0/me/subscribed_apps`,
-        {
+      const checkTrialPageRes = await fetch(`/api/facebook/free-trial-page?page_id=${page?.id}`);
+      const checkTrialPageData = await checkTrialPageRes.json();
+
+      console.log(checkTrialPageRes, checkTrialPageData)
+
+      if (checkTrialPageData?.freeTrialFacebook?.status === "expired") {
+        toast.error("Free trial is expired!");
+
+      } 
+        
+      if (checkTrialPageData?.freeTrialFacebook?.status === "running" && checkTrialPageData?.freeTrialFacebook?.page?.id === page.id) {
+        const response = await fetch(
+          `https://graph.facebook.com/v23.0/me/subscribed_apps`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              access_token: page?.access_token,
+              subscribed_fields: ["feed"],
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Successfully subscribed
+          // Update the subscribed status
+          setSubscribedStatus((prev) => ({
+            ...prev,
+            [data.id]: false, // Now it's subscribed
+          }));
+          setSubscribedButtonClicked(null);
+          getPages();
+        }
+
+      }
+
+      if(checkTrialPageData?.freeTrialFacebook?.status === "assigned"){
+        toast.error("Already assigned a page for free trial !")
+        
+      }
+      
+      if(checkTrialPageData?.freeTrialFacebook?.status === "pending"){
+        const response = await fetch(
+          `https://graph.facebook.com/v23.0/me/subscribed_apps`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              access_token: page?.access_token,
+              subscribed_fields: ["feed"],
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        const freeTrialPageRes = await fetch(`/api/facebook/free-trial-page`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            access_token: accessToken,
-            subscribed_fields: ["feed"],
+            pageId: page?.id,
+            pageName: page?.name,
           }),
+        });
+
+        if (response.ok && freeTrialPageRes.ok) {
+          // Successfully subscribed
+          // Update the subscribed status
+          setSubscribedStatus((prev) => ({
+            ...prev,
+            [data.id]: false, // Now it's subscribed
+          }));
+          setSubscribedButtonClicked(null);
+          getPages();
+        } else {
+          // Handle errors
+          console.error("Error subscribing to page feed:", data);
+          setSubscribedButtonClicked(null);
         }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Successfully subscribed
-        // Update the subscribed status
-        setSubscribedStatus((prev) => ({
-          ...prev,
-          [data.id]: false, // Now it's subscribed
-        }));
-        setSubscribedButtonClicked(null);
-        getPages();
-      } else {
-        // Handle errors
-        console.error("Error subscribing to page feed:", data);
-        setSubscribedButtonClicked(null);
       }
     } catch (error) {
       console.error("Error subscribing to page feed:", error);
@@ -153,8 +206,7 @@ function Pages() {
     }
   };
 
-
-  const removeFeedSubscription = async (accessToken: string) => {
+  const removeFeedSubscription = async (page: any) => {
     try {
       const response = await fetch(
         `https://graph.facebook.com/v23.0/me/subscribed_apps`,
@@ -164,7 +216,7 @@ function Pages() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            access_token: accessToken,
+            access_token: page?.access_token,
             subscribed_fields: ["feed"],
           }),
         }
@@ -172,29 +224,27 @@ function Pages() {
 
       const data = await response.json();
 
+
+
       if (response.ok) {
-        // Successfully unsubscribed
-        // Update the subscribed status
         getPages();
         setSubscribedStatus((prev) => ({
           ...prev,
           [data.id]: true, // Now it's unsubscribed
         }));
         setSubscribedButtonClicked(null);
-
       } else {
         // Handle errors
         console.error("Error unsubscribing from page feed:", data);
       }
     } catch (error) {
-      console.error("Error unsubscribing from page feed:", error);    
+      console.error("Error unsubscribing from page feed:", error);
     }
   };
 
-
   useEffect(() => {
-    if(!user){
-      router.push('/')
+    if (!user) {
+      router.push("/");
     }
   }, [user]);
 
@@ -220,7 +270,12 @@ function Pages() {
                     alt="Facebook Logo"
                     className="w-10 h-10 rounded-full object-cover"
                   />
-                  <div className="font-medium">{page.name} {subscribedStatus[page.id] && <Badge className="bg-green-600">Subscribed</Badge> } </div>
+                  <div className="font-medium">
+                    {page.name}{" "}
+                    {subscribedStatus[page.id] && (
+                      <Badge className="bg-green-600">Subscribed</Badge>
+                    )}{" "}
+                  </div>
                 </div>
 
                 <div className="text-sm text-gray-500 space-y-1 mb-4 w-full">
@@ -235,7 +290,7 @@ function Pages() {
                       variant="outline"
                       onClick={() => {
                         setSubscribedButtonClicked(index);
-                        addFeedSubscription(page.access_token);
+                        addFeedSubscription(page);
                       }}
                     >
                       {subscribedButtonClicked === index ? (
@@ -247,10 +302,9 @@ function Pages() {
                   ) : (
                     <Button
                       variant="destructive"
-                      
                       onClick={() => {
                         setSubscribedButtonClicked(index);
-                        removeFeedSubscription(page.access_token);
+                        removeFeedSubscription(page);
                       }}
                     >
                       {subscribedButtonClicked === index ? (
@@ -275,8 +329,6 @@ function Pages() {
             ))}
           </div>
         )}
-
-        {/* <Button onClick={()=> router.push(`/dashboard/facebook-pages/message`)}>Send Message</Button> */}
       </div>
     </Layout>
   );

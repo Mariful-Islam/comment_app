@@ -5,6 +5,7 @@ import { BsInstagram } from "react-icons/bs";
 import { IoAnalyticsOutline } from "react-icons/io5";
 import { useInstagram } from "@/contexts/InstagramContext";
 import { MdDataUsage } from "react-icons/md";
+import { GoPackage } from "react-icons/go";
 
 export const useMenuItems = () => {
     const { user: fbUser } = useFacebook();
@@ -21,6 +22,7 @@ export const useMenuItems = () => {
 
         { name: 'Edit Automation', href: `/dashboard/edit-automation`, icon: <TbAutomation className="h-5 w-5"/> },
         { name: 'Keywords Usage', href: `/dashboard/keywords-usage`, icon: <MdDataUsage className="h-5 w-5"/> },
+        { name: 'Package', href: `/dashboard/package`, icon: <GoPackage  className="h-5 w-5"/>}
     ].filter(Boolean); // This removes all null, undefined, or false values
 
     return menuItems;

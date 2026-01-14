@@ -15,7 +15,6 @@ function FacebookInfo() {
     if (user && token) {
       localStorage.setItem("facebookAccessToken", token);
 
-
       fetch(`/api/facebook`, {
         method: "POST",
         headers: {
@@ -63,7 +62,6 @@ function FacebookInfo() {
     }
   };
 
-
   const handleFacebookDisconnect = async () => {
     await fetch("/api/auth/facebook/token", {
       method: "DELETE",
@@ -85,7 +83,7 @@ function FacebookInfo() {
   return (
     <div>
       {user && token ? (
-        <div className="border border-gray-200 p-4 rounded-lg shadow-md">
+        <div className="">
           <h1 className="text-lg font-semibold">Facebook Info</h1>
 
           <div className="my-4 text-base">
@@ -107,26 +105,27 @@ function FacebookInfo() {
             </div>
           </div>
 
+          <Button
+            onClick={startAutomationHandler}
+            className="bg-green-500 hover:bg-green-700 text-white"
+          >
+            {isStartingAutomation ? (
+              <div className="flex gap-3 items-center">
+                <div>Running</div>
+                Stop Automation
+              </div>
+            ) : (
+              "Start Automation"
+            )}
+          </Button>
+
+
           <div className="flex flex-col sm:flex-row gap-4 mt-12">
             <Button
               onClick={handleFacebookDisconnect}
               className="bg-red-100 text-red-500 hover:bg-red-500 hover:text-white"
             >
               Disconnect Facebook
-            </Button>
-
-            <Button
-              onClick={startAutomationHandler}
-              className="bg-green-500 hover:bg-green-700 text-white"
-            >
-              {isStartingAutomation ? (
-                <div className="flex gap-3 items-center">
-                  <div>Running</div>
-                  <Spinner />
-                </div>
-              ) : (
-                "Start Automation"
-              )}
             </Button>
           </div>
         </div>

@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 export const GlobalContext = createContext<any>(null);
 
 const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
-  const [openHeaderSidebar, setOpenHeaderSidebar] = useState(window.innerWidth > 500 ? true : false);
+  const [openHeaderSidebar, setOpenHeaderSidebar] = useState(false);
   const [filter, setFilter] = useState<boolean>(false);
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [isOpenUpdateForm, setIsOpenUpdateForm] = useState<boolean>(false);
@@ -22,6 +22,9 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    if(window.innerWidth > 500 ){
+      setOpenHeaderSidebar(true);
+    }
     if (window.innerWidth <= 860) {
       setOpenHeaderSidebar(false);
     }

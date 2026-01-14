@@ -1,29 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useInstagramLogin } from "@/hooks/useInstagramLogin";
 import { useInstagram } from "@/contexts/InstagramContext";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { getCookie } from "@/lib/utils";
+import { Spinner } from "./ui/shadcn-io/spinner";
+import { useUser } from "@/contexts/UserContext";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function InstagramInfo() {
+  const router = useRouter()
   const { login } = useInstagramLogin();
+  const [isFreeTrialInstagram, setIsFreeTrialInstagram] = useState<boolean>(false)
 
   const handleInstagramLogin = () => {
     signIn("instagram");
   };
 
-  const { user, token } = useInstagram();
+  const { user: instaUser, token, isSubscribed, checkSubscription, isLoading } = useInstagram();
+  const { user } = useUser();
 
-  const { data: session } = useSession();
 
   const handleInstaDisconnect = () => {
     console.log("disconnect....");
     signOut();
   };
-
-  const instaToken = getCookie("insta_token");
-
-  const { user: instaUser } = useInstagram();
 
   const loginWithInstagram = () => {
     const width = 500;
@@ -31,17 +33,14 @@ function InstagramInfo() {
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
 
-    // const loginUrl = `https://api.instagram.com/oauth/authorize
-    //                   ?client_id=${process.env.NEXT_PUBLIC_INSTA_CLIENT_ID},
-    //                   &redirect_uri=${process.env.NEXT_PUBLIC_INSTA_CLIENT_SECRET},
-    //                   &response_type=code,
-    //                   &scope=pages_show_list,instagram_manage_insights,instagram_manage_comments,instagram_content_publish,instagram_basic,instagram_manage_messages,instagram_manage_relationships`;
-
-    const loginUrl = `https://www.facebook.com/v19.0/dialog/oauth` +
-  `?client_id=${process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}` +
-  `&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || "")}` +
-  `&response_type=code` +
-  `&scope=instagram_basic,instagram_manage_messages,instagram_manage_comments,instagram_content_publish,pages_show_list`;
+    const loginUrl =
+      `https://www.facebook.com/v19.0/dialog/oauth` +
+      `?client_id=${process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}` +
+      `&redirect_uri=${encodeURIComponent(
+        process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || ""
+      )}` +
+      `&response_type=code` +
+      `&scope=instagram_basic,instagram_manage_messages,instagram_manage_comments,instagram_content_publish,pages_show_list`;
 
     window.open(
       loginUrl,
@@ -49,7 +48,6 @@ function InstagramInfo() {
       `width=${width},height=${height},left=${left},top=${top}`
     );
   };
-
 
   const loginWithInsta = () => {
     const params = new URLSearchParams({
@@ -61,18 +59,77 @@ function InstagramInfo() {
         "instagram_business_manage_messages",
         "instagram_business_manage_comments",
         "instagram_business_content_publish",
-        "instagram_business_manage_insights"
+        "instagram_business_manage_insights",
       ].join(","),
     });
 
     window.location.href = `https://api.instagram.com/oauth/authorize?${params}`;
   };
 
+
+
+  const stopAutomation = async (e?:any) => {
+    e.preventDefault()
+    // e.stopPropagation()
+
+    try {
+      const res = await fetch(`/api/instagram/free-trial`, {method: "DELETE"})
+      const data = await res.json()
+      checkSubscription()
+
+    } catch {
+      throw Error("Stop Automation Failed !")
+    }
+
+  }
+
+  const startAutomation = async (e:any) => {
+    e.preventDefault()
+    // e.stopPropagation()
+    
+    try {
+      const res = await fetch(`/api/instagram/free-trial`, {method: "POST"})
+      const data = await res.json()
+
+      checkSubscription()
+
+    } catch {
+      throw new Error("Stop Automation Failed !")
+    }
+
+  }
+
+  // const isFreeTrialInstagram = user?.isFreeTrial?.instagram?.startDate !== user?.isFreeTrial?.instagram?.endDate
+
+  const checkFreeTrial = async () => {
+    const res = await fetch(`/api/user?email=${user?.email}`)
+    const data = await res.json()
+
+    const startDate = data?.isFreeTrial?.instagram?.startDate
+    const endDate = data?.isFreeTrial?.instagram?.endDate
+
+    if(!startDate && !endDate){
+      setIsFreeTrialInstagram(true)
+    }
+
+    if(new Date(endDate) <= new Date()){
+      setIsFreeTrialInstagram(false)
+      stopAutomation()
+    }else{
+      setIsFreeTrialInstagram(true)
+    }
+  }
+
+
+  useEffect(()=>{
+    checkFreeTrial()
+  }, [router, user])
+
+
   return (
     <div>
-      <Button onClick={loginWithInsta}>Insta</Button>
-      {user ? (
-        <div className="border border-gray-200 p-4 rounded-lg shadow-md">
+      {instaUser ? (
+        <div className="">
           <h1 className="text-lg font-semibold">Instagram Info</h1>
 
           <div className="my-4 text-base">
@@ -86,7 +143,24 @@ function InstagramInfo() {
 
             <div className="flex gap-4 mt-4">
               {/* <div className="text-gray-500 ">Name</div> */}
-              <div>{user?.username}</div>
+              <div>{instaUser?.username}</div>
+            </div>
+
+            <div className="text-sm text-gray-700 mt-4">**Free Trial for 7 days </div>
+
+            <div className="mt-4">
+              { isFreeTrialInstagram ?
+                  isSubscribed ? (
+                    <Button onClick={stopAutomation} variant={`destructive`}>{!isLoading ? "Stop Automation" : <Spinner variant={`circle`}/>  }</Button>
+                  ) : (
+                    <Button onClick={startAutomation} variant={`outline`} >{!isLoading ? "Start Automation" : <Spinner variant={`circle`}/>  }</Button>
+                  )
+                : (
+                  <div className="text-sm text-red-400 ">
+                    Your free trial is expired please choose a plan... <Link href={`/dashboard/package`} className="text-red-500 underline hover:no-underline">plan</Link>
+                  </div>
+              )
+              }
             </div>
           </div>
 
@@ -98,19 +172,7 @@ function InstagramInfo() {
               Disconnect Instagram
             </Button>
 
-            {/* <Button
-              onClick={startAutomationHandler}
-              className="bg-green-500 hover:bg-green-700 text-white"
-            >
-              {isStartingAutomation ? (
-                <div className="flex gap-3 items-center">
-                  <div>Running</div>
-                  <Spinner />
-                </div>
-              ) : (
-                "Start Automation"
-              )}
-            </Button> */}
+
           </div>
         </div>
       ) : (

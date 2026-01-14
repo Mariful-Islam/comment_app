@@ -230,14 +230,7 @@ function CreateKeywordByUser({
           </div>
           <div className="flex flex-col gap-4 mt-6">
             <Label htmlFor="comment">Comments</Label>
-            {/* <Input
-              type="text"
-              id="comment"
-              placeholder="comment"
-              name="comment"
-              value={form?.comments || ""}
-              onChange={handleChange}
-            /> */}
+  
 
             {form?.comments &&
               form.comments?.map((cmt: any, idx: number) => (
@@ -290,14 +283,7 @@ function CreateKeywordByUser({
           </div>
           <div className="flex flex-col gap-4 mt-6">
             <Label htmlFor="message">Messages</Label>
-            {/* <Input
-              type="text"
-              id="message"
-              placeholder="Message"
-              name="message"
-              value={form?.messages || ""}
-              onChange={handleChange}
-            /> */}
+
 
             {form?.messages &&
               form.messages?.map((msg: any, idx: number) => (

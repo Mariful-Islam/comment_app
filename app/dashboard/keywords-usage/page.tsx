@@ -13,13 +13,8 @@ import {
   Trash,
 } from "lucide-react";
 import Image from "next/image";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { useUser } from "@/contexts/UserContext";
@@ -27,6 +22,7 @@ import { FaFacebook, FaInstagram } from "react-icons/fa6";
 import { useKeywordUsage } from "@/contexts/KeywordUsageContext";
 import KeywordDetailView from "./components/KeywordDetailView";
 import { ReusablePagination } from "@/components/Pagination";
+import moment from "moment";
 
 function KeywordUsage() {
   const { user } = useUser();
@@ -56,7 +52,7 @@ function KeywordUsage() {
     },
     {
       accessorKey: "target.name",
-      header: "Target Name",
+      header: "Name",
       cell: ({ row }: any) => {
         return (
           <div className="max-w-full min-w-12 break-all text-wrap line-clamp-2">
@@ -70,35 +66,13 @@ function KeywordUsage() {
       header: "Keyword",
       cell: ({ row }: any) => <div>{row?.original?.keyword?.text}</div>,
     },
-    {
-      accessorKey: "commentReply",
-      header: "Comment",
-      cell: ({ row }: any) => {
-        return (
-          <div className="max-w-full min-w-12 break-all text-wrap line-clamp-2">
-            {row?.original?.commentReply || "No content available"}
-          </div>
-        );
-      },
-    },
 
-    {
-      accessorKey: "messageReply",
-      header: "Message",
-      cell: ({ row }: any) => {
-        return (
-          <div className="max-w-full min-w-12 break-all text-wrap line-clamp-2">
-            {row?.original?.messageReply || "No content available"}
-          </div>
-        );
-      },
-    },
     {
       accessorKey: "createdAt",
       header: "Date",
       cell: ({ row }: any) => {
         const date = new Date(row?.original?.createdAt);
-        return <div>{date.toLocaleString()}</div>;
+        return <div>{moment(date).format("DD-MM-YYYY")}</div>;
       },
     },
     {
@@ -115,6 +89,10 @@ function KeywordUsage() {
     },
   ];
 
+  const getRowSelection = (rowSelection: any) => {
+    console.log(rowSelection);
+  };
+
   return (
     <Layout>
       <div className="max-w-300 mx-auto mt-5 text-sm sm:text-md">
@@ -128,16 +106,19 @@ function KeywordUsage() {
           <h1 className="text-xl font-bold">Keyword Usage</h1>
 
           <Button
-            variant={`outline`}
+            variant="ghost"
+            size="sm"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               fetchKeywordUsages();
             }}
             disabled={loading}
-            className="animate-spin-slow"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+            />
+            Refresh
           </Button>
         </div>
 
@@ -161,13 +142,15 @@ function KeywordUsage() {
           />
         )}
 
-        <ReusablePagination
-          totalPages={KeywordUsages?.meta?.totalPages || 1}
-          currentPage={KeywordUsages?.meta?.currentPage || 1}
-          onPageChange={(page: number) => {
-            fetchKeywordUsages(page);
-          }}
-        />
+        <div className="mt-4 ">
+          <ReusablePagination
+            totalPages={KeywordUsages?.meta?.totalPages || 1}
+            currentPage={KeywordUsages?.meta?.currentPage || 1}
+            onPageChange={(page: number) => {
+              fetchKeywordUsages(page);
+            }}
+          />
+        </div>
       </div>
     </Layout>
   );

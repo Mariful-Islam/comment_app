@@ -1,36 +1,44 @@
 "use client";
 
-import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { withAuth } from "@/hoc/withAuth";
-import { auth, facebookProvider } from "@/lib/firebase";
-import { signInWithPopup, signOut } from "firebase/auth";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import Layout from "@/layout/Layout";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { useUser } from "@/contexts/UserContext";
-import {
-  getSession,
-  signIn,
-  useSession,
-  signOut as NextSignOut,
-} from "next-auth/react";
-import Token from "@/components/Token";
-import FacebookToken from "@/components/FacebookToken";
-import FacebookInfo from "@/components/FacebookInfo";
-import { useFacebookLogin } from "@/hooks/useFacebookLogin";
-import InstagramInfo from "@/components/InstagramInfo";
-import Cookies from "js-cookie";
+import { withAuth } from "@/hoc/withAuth";
+import Layout from "@/layout/Layout";
 
-type UserType = {
-  name: string;
-  email: string;
-  imageUrl?: string;
-};
+// UI Components
+import { Button } from "@/components/ui/button";
+import FacebookInfo from "@/components/FacebookInfo";
+import InstagramInfo from "@/components/InstagramInfo";
+import UpgradePlan from "@/app/dashboard/package/components/UpgradePlan";
+
+// Icons
+import { 
+  Sparkles, 
+  Rocket, 
+  ShieldCheck, 
+  ArrowUpRight, 
+  Zap, 
+  LogOut, 
+  Clock,
+  MessageCircle,
+  BarChart3,
+  Calendar,
+  Users
+} from "lucide-react";
+import FeatureSection from "@/components/FeatureSection";
+import Con from "@/components/Con";
+import InstagramInfoCard from "@/components/InstagramSection";
+import { useInstagram } from "@/contexts/InstagramContext";
+
 
 function Home() {
   const router = useRouter();
-  const { user, loading, fetchUser } = useUser();
+  const { user, loading } = useUser();
+  const {user: instaUser} = useInstagram()
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
   const handleLogout = async () => {
     localStorage.removeItem("token");
@@ -40,59 +48,75 @@ function Home() {
     router.replace("/login");
   };
 
-
+  if (loading) {
+    return (
+      <Layout>
+        <div className="max-w-6xl mx-auto px-4 py-12 animate-pulse space-y-8">
+          <div className="h-64 bg-gray-100 rounded-3xl" />
+          <div className="grid grid-cols-3 gap-6">
+            <div className="h-32 bg-gray-100 rounded-2xl" />
+            <div className="h-32 bg-gray-100 rounded-2xl" />
+            <div className="h-32 bg-gray-100 rounded-2xl" />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <div className="max-w-300 mx-auto mt-4">
-        <div className="flex flex-col gap-4">
-          {loading ? (
-            <div className="animate-pulse flex flex-col gap-2 ">
-              <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
-              <div className="h-6 w-32 bg-gray-300 rounded"></div>
-              <div className="h-4 w-48 bg-gray-300 rounded"></div>
-            </div>
-          ) : user ? (
-            <div className="flex flex-col gap-2 border border-gray-200 p-4 rounded-lg shadow-lg">
-              <h1 className="text-lg font-bold">Dashboard</h1>
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+        
+        {/* --- SECTION 1: WHITE HERO --- */}
 
-              <div className="flex items-center gap-4">
-                <div>
-                  <div className=" text-base text-gray-500">
-                    Hey ! {user.name}. Welcome...
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p>No user data available.</p>
-          )}
+
+        {/* --- SECTION 3: FEATURES --- */}
+        {/* <FeatureSection/> */}
+
+        <div className="grid grid-cols-2 gap-6 w-full">
+          <Con/>
+          <InstagramInfoCard instaUser={instaUser}/>
         </div>
+        
 
-        {/* <div className="flex flex-col sm:flex-row gap-6 ">
-          <div className="w-full sm:w-1/2">
-            <Token />
-          </div>
-          <div className="w-full sm:w-1/2">
-            
-          </div>
-        </div> */}
 
-        <div className="flex flex-col sm:flex-row gap-6 mt-8 ">
-          <div className="w-full sm:w-1/2">
-            <FacebookInfo />
-          </div>
-          <div className="w-full sm:w-1/2">
-            <InstagramInfo />
+        {/* --- SECTION 4: ACCOUNT STATUS --- */}
+        <div className="space-y-6 pt-8">
+          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+            Connected Accounts <div className="h-1 w-1 bg-slate-300 rounded-full" />
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
+              <FacebookInfo />
+            </div>
+            <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
+              <InstagramInfo />
+            </div>
           </div>
         </div>
 
+        {/* --- FOOTER --- */}
+        <footer className="pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-2 text-slate-400 text-sm">
+            <Clock className="w-4 h-4" />
+            <span>Support active: 10:00 AM — 10:00 PM</span>
+          </div>
+          <div className="flex gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={handleLogout} 
+              className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl"
+            >
+              <LogOut className="w-4 h-4 mr-2" /> Logout
+            </Button>
+          </div>
+        </footer>
 
-        <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-700 mt-8">
-          Logout
-        </Button>
-
-
+        {/* UPGRADE DIALOG */}
+        <UpgradePlan 
+          isOpen={isUpgradeOpen} 
+          onClose={() => setIsUpgradeOpen(false)} 
+        />
       </div>
     </Layout>
   );

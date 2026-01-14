@@ -48,7 +48,7 @@ export const FacebookPageProvider = ({ children }: Props) => {
     if(!pages){
       getPagesData();
     }
-  }, [router]);
+  }, [router, pages]);
 
   return (
     <FacebookPageContext.Provider value={{ pages, getPagesData }}>
