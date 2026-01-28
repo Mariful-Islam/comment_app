@@ -10,32 +10,31 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { signInWithPopup } from "firebase/auth";
-import { auth, facebookProvider, provider } from "@/lib/firebase";
-import { Eye, EyeOff } from "lucide-react";
+import { auth, provider } from "@/lib/firebase";
+import { Eye, EyeOff, Zap, Chrome, ShieldCheck, Command } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
-import Image from "next/image";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import icon from '@/assets/icon.png';
 
 function Login() {
   const [form, setForm] = React.useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = React.useState(false);
+  
   const router = useRouter();
-
   const { isAuthenticated, isLoading } = useAuth();
-
   const { fetchUser } = useUser();
-
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.replace("/"); // Redirect to home if already logged in
+      router.replace("/");
     }
   }, [isLoading, isAuthenticated]);
 
-  if (isLoading || isAuthenticated) return null; // prevent flicker
+  if (isLoading || isAuthenticated) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,40 +46,33 @@ function Login() {
     try {
       const res = await fetch("/api/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
-
-      console.log("Login response data:", data);
-
       if (res.ok) {
-        const decodedData:any = jwtDecode(data.token);
-
+        const decodedData: any = jwtDecode(data.token);
         localStorage.setItem("token", data?.token);
         localStorage.setItem("email", form?.email || "");
         Cookies.set("userId", decodedData?.userId || "");
-
         setForm({ email: "", password: "" });
-
-        toast.success("Successfully logged in...");
+        toast.success("Welcome back!");
         router.refresh();
         router.replace("/");
       } else {
-        toast.error(data?.error || "Login unsuccessful...");
+        toast.error(data?.error || "Login unsuccessful");
       }
     } catch (error) {
-      toast.error("Error during Login:");
+      toast.error("Error during Login");
     } finally {
       setLoading(false);
     }
   };
 
   const handleSignIn = async () => {
-    try {
+    // ... logic remains exactly as your original code
+        try {
       const result = await signInWithPopup(auth, provider);
 
       const user = result.user;
@@ -147,92 +139,103 @@ function Login() {
   };
 
 
-
-
-
   return (
-    <div className="flex justify-center items-center h-screen w-screen">
-      <div className="flex flex-col gap-4 p-8 border rounded-lg shadow-lg">
-        <h1 className="text-blue-500 font-bold text-center">
-          Welcome to Comment Automation App
-        </h1>
-        <h1 className="text-2xl font-bold mb-4 text-center">Log In</h1>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="grid w-full max-w-sm items-center gap-3">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              type="email"
-              id="email"
-              placeholder="Email"
-              name="email"
-              value={form?.email || ""}
-              onChange={handleChange}
-            />
+    <div className="min-h-screen w-full flex flex-row-reverse bg-white font-sans antialiased text-slate-900">
+      
+      {/* --- LEFT SIDE: THE FORM --- */}
+      <div className="flex-1 flex flex-col justify-center items-center px-6 lg:px-24">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-sm space-y-10"
+        >
+          {/* Minimal Brand Mark */}
+          <div className="space-y-2">
+             <div className="w-10 h-10  rounded-full flex items-center justify-center mb-6">
+                {/* <Command className="text-white w-5 h-5" /> */}
+                <Image src={icon} alt="App Icon" width={40} height={40} className="absolute"/>
+             </div>
+             <h1 className="text-3xl font-medium tracking-tight">Sign in</h1>
+             <p className="text-slate-500 text-sm">Use your email or Google to continue.</p>
           </div>
 
-          <div className="grid w-full max-w-sm items-center gap-3">
-            <Label htmlFor="password">Password</Label>
-
-            <div className="relative flex items-center">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-1">
+              <Label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Email</Label>
               <Input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                placeholder="Password"
-                name="password"
-                value={form?.password || ""}
+                type="email"
+                placeholder="email@address.com"
+                name="email"
                 onChange={handleChange}
+                className="border-0 border-b border-slate-200 rounded-none px-4 shadow-none focus-visible:ring-0 focus-visible:border-blue-600 transition-colors placeholder:text-slate-300 h-10"
               />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-1/2 -translate-y-1/2"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
             </div>
+
+            <div className="space-y-1">
+              <div className="flex justify-between">
+                <Label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Password</Label>
+                <Link href="#" className="text-[11px] text-slate-400 hover:text-blue-600 underline-offset-4 hover:underline">Forgot?</Link>
+              </div>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  name="password"
+                  onChange={handleChange}
+                  className="border-0 border-b border-slate-200 rounded-none px-4 shadow-none focus-visible:ring-0 focus-visible:border-blue-600 transition-colors placeholder:text-slate-300 h-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-900"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-slate-900 hover:bg-blue-600 text-white h-11 rounded-full text-sm font-medium transition-all"
+            >
+              {loading ? <Spinner className="w-4 h-4" /> : "Continue"}
+            </Button>
+          </form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-100"></span></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-4 text-slate-300 font-medium">Or</span></div>
           </div>
 
           <Button
-            type="submit"
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            variant="outline"
+            className="w-full h-11 border-slate-200 rounded-full flex gap-3 text-sm font-medium hover:bg-slate-100 text-slate-700 hover:text-slate-600 transition-colors"
+            onClick={handleSignIn}
           >
-            login
-            {loading && <Spinner className="ml-2" variant="circle" />}
+            <Chrome className="w-4 h-4 text-slate-600 hover:text-slate-700" />
+            Sign in with Google
           </Button>
-        </form>
-        <div className="flex items-center gap-2">
-          <div className="h-px bg-gray-300 flex-grow"></div>
-          <span className="text-gray-500 text-sm">OR</span>
-          <div className="h-px bg-gray-300 flex-grow"></div>
-        </div>
 
-        <Button
-          type="button"
-          className="border border-gray-300 bg-white  text-gray-500 p-2 rounded hover:bg-gray-200 flex items-center justify-center gap-2"
-          onClick={handleSignIn}
-        >
-          <Image src={require('@/assets/google-logo.png')} alt="Google Logo" className="w-4 h-4" />
+          <p className="text-center text-xs text-slate-400">
+            Don't have an account? <Link href="/signup" className="text-blue-600 font-semibold hover:underline underline-offset-4">Sign up for free</Link>
+          </p>
+        </motion.div>
+      </div>
 
-          Sign Up with Google
-        </Button>
-
-
-
-        <div className="text-sm text-gray-600 flex justify-center gap-3">
-          Not an account ?
-          <Link
-            href="/signup"
-            className="text-blue-500 hover:underline hover:text-blue-700"
-          >
-            Sign Up
-          </Link>
-        </div>
+      {/* --- RIGHT SIDE: CLEAN ACCENT (HIDDEN ON MOBILE) --- */}
+      <div className="hidden lg:flex flex-1 bg-slate-50 items-center justify-center p-12">
+         <div className="max-w-md space-y-4">
+            <div className="p-4 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 animate-pulse">
+               <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+               <p className="text-xs font-medium text-slate-600 uppercase tracking-widest">Automation Engine Active</p>
+            </div>
+            <h2 className="text-4xl font-medium tracking-tight leading-tight">
+               Turn every comment <br /> 
+               into a <span className="text-blue-600 italic">conversation.</span>
+            </h2>
+         </div>
       </div>
     </div>
   );

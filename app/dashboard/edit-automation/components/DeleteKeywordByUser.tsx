@@ -49,7 +49,7 @@ function DeleteKeywordByUser({isOpen, onClose, keyword, refreshKeywords }: Delet
             <DialogTitle></DialogTitle>
             <DialogDescription></DialogDescription>
         </DialogHeader>
-        <DialogContent>
+        <DialogContent className='dark:bg-slate-700'>
             <h1 className="text-2xl font-bold mb-4">Delete Keyword</h1>
             <div className="mb-6">Are you sure you want to delete this keyword ?</div>
 

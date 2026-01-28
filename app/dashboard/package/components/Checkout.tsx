@@ -58,7 +58,7 @@ function Checkout({ isOpen, onClose, data }: CheckoutProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-112.5 p-0 overflow-hidden border-none shadow-2xl">
+      <DialogContent className="sm:max-w-112.5 p-0 overflow-hidden border-none shadow-2xl ">
         {/* Header with Method Branding */}
         <DialogHeader className={`p-8 text-white ${data.method ? methodColors[data.method] : 'bg-slate-900'}`}>
           <div className="flex justify-between items-start">
@@ -74,18 +74,18 @@ function Checkout({ isOpen, onClose, data }: CheckoutProps) {
           </div>
         </DialogHeader>
 
-        <div className="p-8 space-y-6 bg-white">
+        <div className="p-8 space-y-6 bg-white dark:bg-slate-700">
           {/* Summary Card */}
           <div className="space-y-3">
             <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
-              <span className="text-slate-500 text-sm">Target Account</span>
-              <span className="font-semibold text-slate-800 tracking-tight">
+              <span className="text-slate-500 dark:text-slate-100 text-sm">Target Account</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200 tracking-tight">
                 {data.selectedInstaUser ? `@${data.selectedInstaUser.username}` : data.selectedFbPage?.name}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-500 text-sm">Total Payable</span>
-              <span className="text-2xl font-black text-slate-900">৳ {data.amount}</span>
+              <span className="text-slate-500 dark:text-slate-200 text-sm">Total Payable</span>
+              <span className="text-2xl font-black text-slate-900 dark:text-slate-100">৳ {data.amount}</span>
             </div>
           </div>
 
@@ -106,7 +106,7 @@ function Checkout({ isOpen, onClose, data }: CheckoutProps) {
 
           {/* Transaction Input */}
           <div className="space-y-3">
-            <Label htmlFor="trxId" className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <Label htmlFor="trxId" className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
               Transaction ID
             </Label>
             <Input 
@@ -123,7 +123,7 @@ function Checkout({ isOpen, onClose, data }: CheckoutProps) {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-6 bg-slate-50 border-t flex flex-col gap-3">
+        <div className="p-6 bg-slate-50 dark:bg-slate-700 border-t flex flex-col gap-3">
           <Button 
             onClick={handleFinish}
             disabled={!trxId || isSubmitting}

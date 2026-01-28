@@ -27,61 +27,61 @@ function SubscriptionDetailView({
   onClose,
   data,
 }: KeywordDetailViewProps) {
-
-  
   return (
     <Drawer open={isOpen} onClose={onClose}>
-      <DrawerHeader>
-        <DrawerTitle></DrawerTitle>
-        <DrawerDescription></DrawerDescription>
-      </DrawerHeader>
-      <DrawerContent>
-        <div className="p-6 space-y-3 mx-auto min-w-100">
+      <DrawerContent className="dark:bg-slate-700 ">
+        <DrawerHeader>
+          <DrawerTitle></DrawerTitle>
+          <DrawerDescription></DrawerDescription>
+        </DrawerHeader>
+
+
+        <div className="p-6 space-y-2 mx-auto min-w-100 min-h-200">
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-300  uppercase tracking-wide">
               Subscription ID
             </p>
-            <p className="text-md font-medium text-gray-900 mt-1">
+            <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
               {data?.target?.id}
             </p>
           </div>
           {data?.platform === "facebook" ? (
             <div className="border-b pb-4">
-              <p className="text-sm text-gray-500 uppercase tracking-wide">
+              <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
                 Page Name
               </p>
-              <p className="text-md font-medium text-gray-900 mt-1">
+              <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
                 {data?.target?.name}
               </p>
             </div>
           ) : (
             <div className="border-b pb-4">
-              <p className="text-sm text-gray-500 uppercase tracking-wide">
+              <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
                 Username
               </p>
-              <p className="text-md font-medium text-gray-900 mt-1">
+              <p className="text-md font-medium text-gray-900 dark:text-gray-100  mt-1">
                 @{data?.target?.name}
               </p>
             </div>
           )}
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
               Subscribed Date
             </p>
-            <p className="text-md font-medium text-gray-900 mt-1">
+            <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
               {moment(data?.startDate).format("HH:MM:SS A, DD-MMMM-YYYY")}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
               Subscription Expire Date
             </p>
-            <p className="text-md font-medium text-gray-900 mt-1">
+            <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
               {moment(data?.endDate).format("HH:MM:SS A, DD-MMMM-YYYY")}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
               Is Paid
             </p>
             <p className="text-md font-medium text-gray-900 mt-1">
@@ -97,39 +97,38 @@ function SubscriptionDetailView({
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
               Payment Date
             </p>
-            <p className="text-md font-medium text-gray-900 mt-1">
+            <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
               {moment(data?.payment?.paidAt).format("HH:MM:SS A, DD-MMMM-YYYY")}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
               Payment Method
             </p>
-            <p className="text-md font-medium text-gray-900 mt-1">
+            <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
               {data?.payment?.method}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-300 uppercase tracking-wide">
               Amount
             </p>
-            <p className="text-md font-medium text-gray-900 mt-1">
+            <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
               {data?.payment?.amount} TK
             </p>
           </div>
 
-           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+          <div className="border-b pb-4">
+            <p className="text-sm text-gray-500 dark:text-gray-100 font-medium uppercase tracking-wide">
               TRX ID
             </p>
-            <p className="text-md font-medium text-gray-900 mt-1">
+            <p className="text-md font-medium text-gray-900 dark:text-gray-100 mt-1">
               {data?.payment?.trxId}
             </p>
           </div>
-
         </div>
       </DrawerContent>
     </Drawer>

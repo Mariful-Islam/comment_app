@@ -262,7 +262,7 @@ function Pages() {
             {pages?.map((page, index) => (
               <div
                 key={page.id}
-                className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col items-start transition hover:shadow-md w-full"
+                className="bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-400 rounded-xl shadow-sm p-6 flex flex-col items-start transition hover:shadow-md w-full"
               >
                 <div className="flex justify-center items-center gap-2 mb-6">
                   <Image
@@ -273,12 +273,12 @@ function Pages() {
                   <div className="font-medium">
                     {page.name}{" "}
                     {subscribedStatus[page.id] && (
-                      <Badge className="bg-green-600">Subscribed</Badge>
+                      <Badge className="bg-green-600 text-white ml-2">Subscribed</Badge>
                     )}{" "}
                   </div>
                 </div>
 
-                <div className="text-sm text-gray-500 space-y-1 mb-4 w-full">
+                <div className="text-sm text-gray-500 dark:text-slate-300 space-y-1 mb-4 w-full">
                   <div className="flex justify-between flex-wrap">
                     <div className="mb-2">{page?.category}</div>
                   </div>

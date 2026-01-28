@@ -124,14 +124,14 @@ function CommentKeyword() {
           {row?.getValue("isActive") ? (
             <div
               onClick={(e) => handleStop(e, row.original)}
-              className="bg-gray-200 hover:bg-red-300 h-8 w-8 flex items-center justify-center rounded-sm cursor-pointer duration-150"
+              className="bg-gray-200 dark:bg-slate-800 hover:bg-red-300 dark:hover:bg-red-800 h-8 w-8 flex items-center justify-center rounded-sm cursor-pointer duration-150"
             >
               <Square className="text-red-500 h-4 w-4 " />
             </div>
           ) : (
             <div
               onClick={(e) => handleStart(e, row.original)}
-              className="bg-gray-200 hover:bg-green-300 h-8 w-8 flex items-center justify-center rounded-sm cursor-pointer duration-150"
+              className="bg-gray-200 dark:bg-slate-800 hover:bg-green-300 dark:hover:bg-green-800 h-8 w-8 flex items-center justify-center rounded-sm cursor-pointer duration-150"
             >
               <Play className="text-green-500 h-4 w-4" />
             </div>

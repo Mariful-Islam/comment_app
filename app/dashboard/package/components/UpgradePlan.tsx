@@ -35,11 +35,11 @@ function UpgradePlan({ isOpen, onClose }: UpgradePlanProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-125 p-0 overflow-hidden border-none shadow-2xl">
+      <DialogContent className="sm:max-w-125 p-0 overflow-hidden border-none shadow-2xl dark:bg-slate-800">
         {/* Header Section with Gradient Background */}
-        <DialogHeader className="p-8 bg-slate-50/50 border-b">
-          <DialogTitle className="text-2xl font-bold text-slate-900">Upgrade Your Plan</DialogTitle>
-          <DialogDescription className="text-slate-500 text-base">
+        <DialogHeader className="p-8 bg-slate-50/50 border-b dark:bg-slate-700">
+          <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">Upgrade Your Plan</DialogTitle>
+          <DialogDescription className="text-slate-500 dark:text-slate-300 text-base">
             Select the platform and account you want to boost today.
           </DialogDescription>
         </DialogHeader>
@@ -56,12 +56,12 @@ function UpgradePlan({ isOpen, onClose }: UpgradePlanProps) {
                   className={`relative flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all duration-200 group
                     ${isSelected === opt.id 
                       ? "border-blue-500 bg-blue-50/30 shadow-md" 
-                      : "border-slate-100 hover:border-slate-200 bg-white"}`}
+                      : "border-slate-100 hover:border-slate-200 bg-white dark:bg-slate-700 hover:dark:bg-slate-600"}`}
                 >
-                  <div className={`p-3 rounded-full mb-3 transition-transform group-hover:scale-110 ${isSelected === opt.id ? "bg-white shadow-sm" : "bg-slate-50"}`}>
+                  <div className={`p-3 rounded-full mb-3 transition-transform group-hover:scale-110 ${isSelected === opt.id ? "bg-white dark:bg-slate-700 shadow-sm" : "bg-slate-50"}`}>
                     {opt.icon}
                   </div>
-                  <span className="font-medium text-slate-700 capitalize">{opt.name}</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-100 capitalize">{opt.name}</span>
                   {isSelected === opt.id && (
                     <CheckCircle2 className="absolute top-2 right-2 w-5 h-5 text-blue-500 fill-white" />
                   )}
@@ -79,10 +79,10 @@ function UpgradePlan({ isOpen, onClose }: UpgradePlanProps) {
               
               <div className="space-y-2 max-h-50 overflow-y-auto pr-2 custom-scrollbar">
                 {isSelected === "instagram" && instaUser && (
-                  <div className={`flex items-center justify-between p-4 rounded-lg border border-slate-100 bg-slate-50 ${instaUser?.id === selectedInstaUser?.id ? 'border-slate-400' : ''}`} onClick={()=>setSelectedInstaUser(instaUser)}>
+                  <div className={`flex items-center justify-between p-4 rounded-lg border border-slate-100 bg-slate-50 dark:bg-slate-700 ${instaUser?.id === selectedInstaUser?.id ? 'border-slate-400' : ''}`} onClick={()=>setSelectedInstaUser(instaUser)}>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white shadow-sm" />
-                      <span className="font-medium text-slate-700">@{instaUser.username}</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-50">@{instaUser.username}</span>
                     </div>
                     <div className={`h-4 w-4 rounded-full border-4 ${instaUser?.id === selectedInstaUser?.id ? 'border-blue-500' : 'border-slate-200' } `} />
                   </div>
@@ -91,14 +91,14 @@ function UpgradePlan({ isOpen, onClose }: UpgradePlanProps) {
                 {isSelected === "facebook" && pages?.data?.map((page: any, i: number) => (
                   <div 
                     key={i} 
-                    className={`${page?.id === selectedFbPage?.id ? 'border-slate-400' : ''} flex items-center justify-between p-4 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors`}
+                    className={`${page?.id === selectedFbPage?.id ? 'border-slate-400' : ''} flex items-center justify-between p-4 rounded-lg border border-slate-100 hover:bg-slate-50 dark:hover:bg-slate-600 cursor-pointer transition-colors`}
                     onClick={()=>setSelectedFbPage(page)}
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
                         {page?.name.charAt(0)}
                       </div>
-                      <span className="font-medium text-slate-700">{page?.name}</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-100">{page?.name}</span>
                     </div>
                     <div className={`h-5 w-5 rounded-full border-2 ${page?.id === selectedFbPage?.id ? 'border-blue-500 border-4' : 'border-slate-200'}`} />
                   </div>
@@ -109,7 +109,7 @@ function UpgradePlan({ isOpen, onClose }: UpgradePlanProps) {
         </div>
 
         {/* Action Footer */}
-        <div className="p-6 bg-slate-50 border-t flex justify-end gap-3">
+        <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t flex justify-end gap-3">
           <Button variant="ghost" onClick={onClose} className="text-slate-500">
             Cancel
           </Button>

@@ -23,8 +23,8 @@ export function ReusablePagination({
   const pageRange = getPaginationRange(currentPage, totalPages);
 
   return (
-    <Pagination>
-      <PaginationContent>
+    <Pagination >
+      <PaginationContent className="bg-white dark:bg-slate-700 py-2 px-4 rounded-md border border-slate-200 dark:border-slate-600">
         <PaginationItem>
           <PaginationPrevious
             href="#"

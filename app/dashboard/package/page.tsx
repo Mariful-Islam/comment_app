@@ -60,9 +60,9 @@ function Package() {
       cell: ({ row }: any) => {
         const status = row?.original?.status;
         const statusStyles: any = {
-          pending: "text-yellow-500 bg-yellow-100",
-          running: "text-green-500 bg-green-100",
-          expired: "text-red-500 bg-red-100",
+          pending: "text-yellow-500 dark:text-yellow-100 bg-yellow-100 dark:bg-yellow-800",
+          running: "text-green-500 dark:text-green-100 bg-green-100 dark:bg-green-800",
+          expired: "text-red-500 dark:text-red-100 bg-red-100 dark:bg-red-800",
         };
         return (
           <div className={`${statusStyles[status] || "bg-gray-100"} text-center rounded-md py-1 px-2 font-medium uppercase text-[12px]`}>
@@ -97,12 +97,12 @@ function Package() {
       <div className="max-w-5xl mx-auto mt-5 px-4">
         <h2 className="text-xl font-bold">Package & Billing</h2>
         
-        <div className="mt-6 p-6 border rounded-lg bg-card">
-          <h3 className="text-md font-medium text-gray-500">Current Plan</h3>
+        <div className="mt-6 p-6 border rounded-lg bg-card dark:bg-slate-700">
+          <h3 className="text-md font-medium text-gray-500 dark:text-gray-200">Current Plan</h3>
           <div className="flex justify-between items-end mt-2">
             <div>
               <div className="text-2xl font-bold text-primary">Basic Plan</div>
-              <p className="text-sm text-muted-foreground mt-1">Manage up to 5 automated posts</p>
+              <p className="text-sm text-muted-foreground mt-1 dark:text-gray-400">Manage up to 5 automated posts</p>
             </div>
             <Button variant="outline" size="sm" onClick={()=>setIsUpgrading(!isUpgrading)}>Upgrade Plan</Button>
           </div>
@@ -142,17 +142,17 @@ function Package() {
           <div className="flex gap-4">
             <Button 
               variant="default" 
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 dark:text-white"
               onClick={() => setPlatform("facebook")}
             >
-              <FaFacebook className="mr-2" /> Configure Facebook
+              <FaFacebook className="mr-2 dark:text-white" /> Configure Facebook
             </Button>
             <Button 
               variant="default" 
-              className="bg-linear-to-r from-purple-500 to-pink-500 hover:opacity-90"
+              className="bg-linear-to-r from-purple-500 to-pink-500 hover:opacity-90 dark:text-white"
               onClick={() => setPlatform("instagram")}
             >
-              <FaInstagram className="mr-2" /> Configure Instagram
+              <FaInstagram className="mr-2 dark:text-white" /> Configure Instagram
             </Button>
           </div>
         </div>

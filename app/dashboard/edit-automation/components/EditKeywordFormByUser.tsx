@@ -84,7 +84,7 @@ function EditKeywordFormByUser({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
 
-      <DialogContent className="z-70 max-h-screen overflow-y-auto">
+      <DialogContent className="z-70 max-h-screen overflow-y-auto bg-white dark:bg-slate-700">
         <h1 className="text-2xl font-bold mb-4">Edit Keyword</h1>
 
         <form onSubmit={handleSubmit}>
@@ -97,6 +97,7 @@ function EditKeywordFormByUser({
               name="keyword"
               value={form?.keyword || ""}
               onChange={handleChange}
+              className=""
             />
           </div>
           <div className="flex flex-col gap-4 mt-6">
@@ -111,7 +112,7 @@ function EditKeywordFormByUser({
             /> */}
             {form?.comments &&
               form.comments?.map((cmt: any, idx: number) => (
-                <div key={idx} className="mt-2 p-2 bg-gray-100 rounded-md">
+                <div key={idx} className="mt-2 p-2 bg-gray-100 dark:bg-slate-800 rounded-md">
                   <Input
                     type="text"
                     placeholder={`Comment ${idx + 1}`}
@@ -124,6 +125,7 @@ function EditKeywordFormByUser({
                         comments: newComments,
                       }));
                     }}
+                    className=""
                   />
                   <Button
                     variant="link"
@@ -170,7 +172,7 @@ function EditKeywordFormByUser({
             /> */}
             {form?.messages &&
               form.messages?.map((msg: any, idx: number) => (
-                <div key={idx} className="mt-2 p-2 bg-gray-100 rounded-md">
+                <div key={idx} className="mt-2 p-2 bg-gray-100 dark:bg-slate-800 rounded-md">
                   <Input
                     type="text"
                     placeholder={`Message ${idx + 1}`}
@@ -183,6 +185,7 @@ function EditKeywordFormByUser({
                         messages: newMessages,
                       }));
                     }}
+                    className=" "
                   />
                   <Button
                     variant="link"

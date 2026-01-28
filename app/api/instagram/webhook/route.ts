@@ -72,8 +72,13 @@ export async function POST(req: NextRequest) {
 
         console.log("Matched Keyword:", matchKeyword);
 
-        const cookieStore = cookies()
-        const accessToken = (await cookieStore).get('insta_access_token')
+        // const cookieStore = cookies()
+        // const accessToken = (await cookieStore).get('insta_access_token')?.value
+
+        const accessToken = `IGAALoV9MO92xBZAFpzUFVuTWczZA2tZAeTk5MElYOWtjaFk4S1YtQjFUbWJMM1N1T0ZAUY2gwcEV0cUl3MzNwNkhXU2VvcDZAydGw5QVhnVFpKVVdBOUJWMlhkUzlyamJ2RGg0TXlmbl9jZATJPaV9BMmlBTjBVajhqRE9QRFZA4X3hJOAZDZD`;
+
+        console.log("Access Token:", accessToken);
+
         
         // Note: Graph API v23.0 is a future version; usually, you'll use the current stable (v18.0 - v20.0)
 
@@ -96,11 +101,19 @@ export async function POST(req: NextRequest) {
             const randomMessageIdx = Math.floor(Math.random() * matchKeyword?.messages?.length);
             replyMessage = matchKeyword?.messages[randomMessageIdx];
           }
+
+          matchKeyword.comments.forEach((cmt:string) => {
+
+            if (cmt === commentText){
+              return NextResponse.json({ message: "Comment already replied to with this text" }, { status: 401 });
+            }
+
+          });
         }
 
 
 
-        if( replyComment && replyMessage && matchKeyword?.isActive) {
+        if(replyComment && replyMessage && matchKeyword?.isActive) {
 
 
           const commentApiUrl = `https://graph.instagram.com/v20.0/${commentId}/replies`;
@@ -172,7 +185,7 @@ export async function POST(req: NextRequest) {
 
           }
         }
-      }else {
+      } else {
         console.log("Change field is not 'comments' or comment is from own account, skipping.");  
       }
     }

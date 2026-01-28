@@ -16,58 +16,58 @@ interface KeywordDetailViewProps {
 function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
   return (
     <Drawer open={isOpen} onClose={onClose}>
-      <DrawerContent title="Keyword Usage Detail">
+      <DrawerContent title="Keyword Usage Detail" className="bg-white dark:bg-slate-700">
         <DrawerHeader>
           <DrawerTitle>
-            <h2 className="text-xl font-semibold">Keyword Usage Detail</h2>
+            <h2 className="text-xl text-slate-700 dark:text-slate-100 font-semibold">Keyword Usage Detail</h2>
           </DrawerTitle>
         </DrawerHeader>
         <div className="p-6 space-y-6 mx-auto min-w-100">
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-100 font-medium uppercase tracking-wide">
               Keyword
             </p>
-            <p className="text-lg font-medium text-gray-900 mt-1">
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-50 mt-1">
               {data?.keyword?.text || "—"}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-100 font-medium uppercase tracking-wide">
               Target
             </p>
-            <p className="text-lg font-medium text-gray-900 mt-1">
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-50 mt-1">
               {data?.target?.name || "—"}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-100 font-medium uppercase tracking-wide">
               Post ID
             </p>
-            <p className="text-lg font-medium text-gray-900 mt-1">
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-50 mt-1">
               {data?.postId || "—"}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-100 font-medium uppercase tracking-wide">
               Comment Reply
             </p>
-            <p className="text-lg font-medium text-gray-900 mt-1">
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-50 mt-1">
               {data?.commentReply || "—"}
             </p>
           </div>
           <div className="border-b pb-4">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-100 font-medium uppercase tracking-wide">
               Message Reply
             </p>
-            <p className="text-lg font-medium text-gray-900 mt-1">
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-50 mt-1">
               {data?.messageReply || "—"}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 dark:text-gray-100 font-medium uppercase tracking-wide">
               Date Used
             </p>
-            <p className="text-lg font-medium text-gray-900 mt-1">
+            <p className="text-lg font-medium text-gray-900 dark:text-gray-50 mt-1">
               {data?.createdAt
                 ? new Date(data.createdAt).toLocaleString()
                 : "—"}

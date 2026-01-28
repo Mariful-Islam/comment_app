@@ -105,7 +105,7 @@ function FacebookInfo() {
             </div>
           </div>
 
-          <Button
+          {/* <Button
             onClick={startAutomationHandler}
             className="bg-green-500 hover:bg-green-700 text-white"
           >
@@ -117,7 +117,7 @@ function FacebookInfo() {
             ) : (
               "Start Automation"
             )}
-          </Button>
+          </Button> */}
 
 
           <div className="flex flex-col sm:flex-row gap-4 mt-12">

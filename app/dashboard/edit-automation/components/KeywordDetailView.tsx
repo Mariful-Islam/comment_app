@@ -22,7 +22,7 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent>
+      <DrawerContent className="dark:bg-slate-700">
         <div className="mx-auto w-full max-w-md">
           <DrawerHeader>
             <DrawerTitle></DrawerTitle>
@@ -30,7 +30,7 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
           </DrawerHeader>
           <div className="p-4 pb-6">
             <div className="mt-3 h-100">
-              <div className="max-w-md border rounded-lg shadow-sm p-4 bg-white">
+              <div className="max-w-md border rounded-lg shadow-sm p-4 bg-white dark:bg-slate-800">
                 {/* Header: Platform & Status */}
                 <div className="flex justify-between items-center mb-3">
                   <span
@@ -45,8 +45,8 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
                       data?.isActive
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-green-100 dark:bg-green-700 text-green-700 dark:text-slate-100"
+                        : "bg-gray-100 dark:bg-gray-500 text-gray-500 dark:text-slate-100"
                     }`}
                   >
                     {data?.isActive ? "● Active" : "● Inactive"}
@@ -54,7 +54,7 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
                 </div>
 
                 {/* Post Context */}
-                <div className="bg-gray-50 p-2 rounded text-sm text-gray-600 mb-3 italic">
+                <div className="bg-gray-50 dark:bg-slate-700 p-2 rounded text-sm text-gray-600 dark:text-gray-100 mb-3 italic">
                   " {data?.post?.text.substring(0, 60)}... "
                 </div>
 
@@ -62,25 +62,25 @@ function KeywordDetailView({ isOpen, onClose, data }: KeywordDetailViewProps) {
                 <div className="mb-4 text-sm sm:text-md">
                
                   <div className="text-gray-400 font-medium flex items-center justify-between">
-                    Keyword: <span className="text-gray-800">{data?.keyword}</span>
+                    Keyword: <span className="text-gray-800 dark:text-slate-100">{data?.keyword}</span>
                   </div>
                   <div className="text-gray-400 font-medium flex items-center justify-between border-t my-2 py-2">
-                    Comment Reply: <span className="text-gray-800">{data?.comments?.map((cmt: string, i: number)=>(
+                    Comment Reply: <span className="text-gray-800 dark:text-slate-100">{data?.comments?.map((cmt: string, i: number)=>(
                       <div key={i} className="">{i+1}. {cmt}</div>
                     ))}</span>
                   </div>
                   <div className="text-gray-400 font-medium flex items-center justify-between border-t my-2 py-2">
-                    Message Reply: <span className="text-gray-800">{data?.messages?.map((msg: string, i:number)=>(
+                    Message Reply: <span className="text-gray-800 dark:text-slate-100">{data?.messages?.map((msg: string, i:number)=>(
                       <div key={i}>{i+1}. {msg}</div>
                     ))}</span>
                   </div>
                   <div className="text-gray-400 font-medium flex items-center justify-between border-t my-2 py-2">
-                    Reply Count: <span className="text-gray-800">{data?.count}</span>
+                    Reply Count: <span className="text-gray-800 dark:text-slate-100">{data?.count}</span>
                   </div>
                 </div>
 
                 {/* Footer: User & Time */}
-                <div className="flex justify-between items-center border-t pt-3 text-xs text-gray-500">
+                <div className="flex justify-between items-center border-t pt-3 text-xs text-gray-500 dark:text-slate-300">
                   <span>User: {data?.userId}</span>
                   <span>
                     {new Date(data?.createdAt).toLocaleDateString()}

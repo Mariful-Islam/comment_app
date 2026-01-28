@@ -33,103 +33,68 @@ export async function GET(request: NextRequest) {
       ],
     };
 
-    /**
-     * 2. DATE FILTERING
-     */
     // if (start || end) {
-    //   // Initialize the createdAt object
     //   matchQuery.createdAt = {};
 
     //   if (start) {
-    //     const startDate = new Date(start); // Convert string "2026-01-10" to Date object
+    //     const startDate = new Date(start);
     //     if (!isNaN(startDate.getTime())) {
-    //       // Set to start of day (00:00:00)
     //       startDate.setUTCHours(0, 0, 0, 0);
-    //       matchQuery.createdAt.$gte = startDate.toISOString()
+    //       // Pass the Date object directly, NOT .toISOString()
+    //       matchQuery.createdAt.$gte = startDate;
     //     }
     //   }
 
     //   if (end) {
     //     const endDate = new Date(end);
     //     if (!isNaN(endDate.getTime())) {
-    //       // Set to end of day (23:59:59)
     //       endDate.setUTCHours(23, 59, 59, 999);
-    //       matchQuery.createdAt.$lte = endDate.toISOString()
+    //       // Pass the Date object directly, NOT .toISOString()
+    //       matchQuery.createdAt.$lte = endDate;
     //     }
     //   }
 
-    //   // CRITICAL: If start/end were invalid, remove the empty createdAt object
     //   if (Object.keys(matchQuery.createdAt).length === 0) {
     //     delete matchQuery.createdAt;
     //   }
     // }
-    
-
-    /**
-     * 2. DATE FILTERING
-     */
-    if (start || end) {
-      matchQuery.createdAt = {};
-
-      if (start) {
-        const startDate = new Date(start);
-        if (!isNaN(startDate.getTime())) {
-          startDate.setUTCHours(0, 0, 0, 0);
-          // Pass the Date object directly, NOT .toISOString()
-          matchQuery.createdAt.$gte = startDate; 
-        }
-      }
-
-      if (end) {
-        const endDate = new Date(end);
-        if (!isNaN(endDate.getTime())) {
-          endDate.setUTCHours(23, 59, 59, 999);
-          // Pass the Date object directly, NOT .toISOString()
-          matchQuery.createdAt.$lte = endDate;
-        }
-      }
-
-      if (Object.keys(matchQuery.createdAt).length === 0) {
-        delete matchQuery.createdAt;
-      }
-    }
-
 
     console.log("Final Match Query:", JSON.stringify(matchQuery, null, 2));
 
     /**
      * 3. EXECUTE AGGREGATION
      */
+    // Inside your GET handler
     const stats = await KeywordUsage.aggregate([
       { $match: matchQuery },
       {
         $group: {
-          _id: "$platform", // Groups by "facebook", "instagram", etc.
+          _id: { $toLower: "$platform" }, // Directly handle casing in Mongo
           totalCount: { $sum: 1 },
         },
       },
     ]);
 
-    /**
-     * 4. FORMAT OUTPUT
-     * Ensures you get a clean object like { facebook: 10, instagram: 5 }
-     */
-    const result = stats.reduce(
-      (acc, curr) => {
-        if (curr._id) {
-          acc[curr._id.toLowerCase()] = curr.totalCount;
-        }
-        return acc;
-      },
-      { facebook: 0, instagram: 0 } as Record<string, number>
-    );
+    // Final formatted data
+    const result = {
+      facebook: 0,
+      instagram: 0,
+      total: 0,
+    };
+
+    stats.forEach((item) => {
+      if (item._id === "facebook" || item._id === "instagram") {
+        result[item._id as "facebook" | "instagram"] = item.totalCount;
+        result.total += item.totalCount;
+      }
+    });
 
     return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
     console.error("Aggregation Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

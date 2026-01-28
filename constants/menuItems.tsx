@@ -13,7 +13,7 @@ export const useMenuItems = () => {
 
     const menuItems = [
         { name: 'Home', href: '/', icon: <House className="h-5 w-5"/> },
-        { name: 'Analytics', href: '/dashboard/analytics', icon: <IoAnalyticsOutline className="h-5 w-5"/> },
+        // { name: 'Analytics', href: '/dashboard/analytics', icon: <IoAnalyticsOutline className="h-5 w-5"/> },
 
         // Use the logical AND, but we will filter out the "false" results later
         fbUser && { name: 'Facebook Pages', href: '/dashboard/facebook-pages', icon: <Columns2 className="h-5 w-5"/> },

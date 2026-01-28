@@ -7,28 +7,28 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { toast } from "sonner";
-import { FaGoogle } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff, Command, Chrome, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import icon from '@/assets/icon.png';
 
 function Signup() {
   const [form, setForm] = React.useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = React.useState(false);
+  
   const router = useRouter();
-
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.replace("/"); // Redirect to home if already logged in
+      router.replace("/");
     }
   }, [isLoading, isAuthenticated]);
 
-  if (isLoading || isAuthenticated) return null; // prevent flicker
-  
+  if (isLoading || isAuthenticated) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,112 +40,129 @@ function Signup() {
     try {
       const res = await fetch("/api/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({...form, name: form?.email?.split('@')[0]}),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, name: form?.email?.split('@')[0] }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
         setForm({ email: "", password: "" });
-        
         localStorage.setItem("email", form?.email || "");
-
-        toast.success("Account created successfully...");
-
+        toast.success("Account created successfully!");
         router.push("/login");
       } else {
-        toast("Event has been created.");
         toast.error(data?.error || "Signup unsuccessful...");
       }
     } catch (error) {
-      toast.error("Error during signup:");
+      toast.error("Error during signup. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-screen">
-      <div className="flex flex-col gap-4 p-8 border rounded-lg shadow-lg">
-        <h1 className="text-blue-500 font-bold text-center">
-          Welcome to Comment Automation App
-        </h1>
-        <h1 className="text-2xl font-bold mb-4 text-center">Create Account</h1>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="grid w-full max-w-sm items-center gap-3">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              type="email"
-              id="email"
-              placeholder="Email"
-              name="email"
-              value={form?.email || ""}
-              onChange={handleChange}
-            />
+    <div className="min-h-screen w-full flex flex-row-reverse bg-white font-sans antialiased text-slate-900">
+      
+      {/* --- LEFT SIDE: THE FORM --- */}
+      <div className="flex-1 flex flex-col justify-center items-center px-6 lg:px-24">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-sm space-y-10"
+        >
+          {/* Minimal Brand Mark */}
+          <div className="space-y-2">
+             <div className="w-10 h-10 rounded-full flex items-center justify-center mb-6">
+                {/* <Command className="text-white w-5 h-5" /> */}
+                <Image src={icon} alt="App Icon" width={40} height={40} className="absolute"/>
+                
+             </div>
+             <h1 className="text-3xl font-medium tracking-tight">Create Account</h1>
+             <p className="text-slate-500 text-sm">Join the automation revolution today.</p>
           </div>
 
-          <div className="grid w-full max-w-sm items-center gap-3">
-            <Label htmlFor="password">Password</Label>
-
-            <div className="relative flex items-center">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-1">
+              <Label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Email Address</Label>
               <Input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder="Password"
-                name="password"
-                value={form?.password || ""}
+                type="email"
+                placeholder="name@company.com"
+                name="email"
+                value={form.email}
                 onChange={handleChange}
+                className="border-0 border-b border-slate-200 rounded-none px-4 shadow-none focus-visible:ring-0 focus-visible:border-blue-600 transition-colors placeholder:text-slate-300 h-10"
               />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-1/2 -translate-y-1/2"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
             </div>
+
+            <div className="space-y-1">
+              <Label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Password</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Create a strong password"
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  className="border-0 border-b border-slate-200 rounded-none px-4 shadow-none focus-visible:ring-0 focus-visible:border-blue-600 transition-colors placeholder:text-slate-300 h-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-900"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-slate-900 hover:bg-blue-600 text-white h-11 rounded-full text-sm font-medium transition-all shadow-lg shadow-slate-200 hover:shadow-blue-200"
+            >
+              {loading ? <Spinner className="w-4 h-4" /> : "Get Started"}
+            </Button>
+          </form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-100"></span></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-4 text-slate-300 font-medium">Or</span></div>
           </div>
 
           <Button
-            type="submit"
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            variant="outline"
+            type="button"
+            className="w-full h-11 border-slate-200 rounded-full flex gap-3 text-sm font-medium hover:bg-slate-50 text-slate-600 hover:text-slate-700 transition-colors"
           >
-            Sign Up
-            {loading && <Spinner className="ml-2" variant="circle" />}
+            <Chrome className="w-4 h-4 text-slate-600" />
+            Sign up with Google
           </Button>
-        </form>
-        <div className="flex items-center gap-2">
-          <div className="h-px bg-gray-300 flex-grow"></div>
-          <span className="text-gray-500 text-sm">OR</span>
-          <div className="h-px bg-gray-300 flex-grow"></div>
-        </div>
 
-        <Button
-          type="button"
-          className="border border-gray-300 bg-white  text-gray-500 p-2 rounded hover:bg-gray-200 flex items-center justify-center gap-2"
-        >
-          <FaGoogle />
-          Sign Up with Google
-        </Button>
+          <p className="text-center text-xs text-slate-400">
+            Already have an account? <Link href="/login" className="text-blue-600 font-semibold hover:underline underline-offset-4">Log in</Link>
+          </p>
+        </motion.div>
+      </div>
 
-        <p className="text-sm text-gray-600 flex justify-center gap-3">
-          Already have an account ?
-          <Link
-            href="/login"
-            className="text-blue-500 hover:underline hover:text-blue-700"
-          >
-            Log In
-          </Link>
-        </p>
+      {/* --- RIGHT SIDE: FEATURE ACCENT --- */}
+      <div className="hidden lg:flex flex-1 bg-slate-50 items-center justify-center p-12">
+         <div className="max-w-md space-y-6">
+            <div className="p-4 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+               <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-blue-600" />
+               </div>
+               <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest">7-Day Free Trial Included</p>
+            </div>
+            <h2 className="text-4xl font-medium tracking-tight leading-tight">
+               Build your <span className="text-blue-600 italic">community</span> <br /> 
+               on autopilot.
+            </h2>
+            <p className="text-slate-500 leading-relaxed font-medium">
+              Join 1,000+ businesses automating their social media engagement with Comment To DM.
+            </p>
+         </div>
       </div>
     </div>
   );

@@ -30,15 +30,15 @@ function MakePayment({ isOpen, onClose, data }: MakePaymentProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-112.5 p-0 overflow-hidden border-none shadow-2xl">
         {/* Header Section */}
-        <DialogHeader className="p-8 bg-slate-50/50 border-b text-left">
-          <div className="flex items-center gap-2 mb-2 text-blue-600">
+        <DialogHeader className="p-8 bg-slate-50/50 dark:bg-slate-700 border-b text-left">
+          <div className="flex items-center gap-2 mb-2 text-blue-600 dark:text-blue-400">
             <ShieldCheck className="w-5 h-5" />
             <span className="text-xs font-bold uppercase tracking-widest">Secure Checkout</span>
           </div>
-          <DialogTitle className="text-2xl font-bold text-slate-900">
+          <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
             Complete Payment
           </DialogTitle>
-          <DialogDescription className="text-slate-500 text-base">
+          <DialogDescription className="text-slate-500 dark:text-slate-300 text-base ">
             Choose your preferred mobile wallet to finalize the upgrade.
           </DialogDescription>
         </DialogHeader>
@@ -46,21 +46,21 @@ function MakePayment({ isOpen, onClose, data }: MakePaymentProps) {
         <div className="p-8 space-y-6">
           {/* Order Summary Summary (Optional but Premium) */}
           {data && (
-            <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <div className="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-100">
               <div>
-                <p className="text-xs text-slate-500 uppercase font-semibold">Total Amount</p>
-                <p className="text-xl font-bold text-slate-900">৳ {data?.amount || "0.00"} </p>
+                <p className="text-xs text-slate-500 dark:text-slate-200 uppercase font-semibold">Total Amount</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-slate-100">৳ {data?.amount || "0.00"} </p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-slate-500 uppercase font-semibold">Plan</p>
-                <p className="text-sm font-medium text-slate-700">{data?.planName || "Upgrade"}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-300 uppercase font-semibold">Plan</p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{data?.planName || "Upgrade"}</p>
               </div>
             </div>
           )}
 
           {/* Payment Method Grid */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-200">
               Select Payment Method
             </h3>
             <div className="grid grid-cols-1 gap-3">
@@ -71,7 +71,7 @@ function MakePayment({ isOpen, onClose, data }: MakePaymentProps) {
                   className={`relative flex items-center p-4 rounded-xl border-2 transition-all duration-200 group
                     ${selectedMethod === method.id 
                       ? "border-blue-500 bg-blue-50/30 shadow-md" 
-                      : "border-slate-100 hover:border-slate-200 bg-white"}`}
+                      : "border-slate-100 hover:border-slate-200 bg-white dark:bg-slate-700 hover:dark:bg-slate-600"}`}
                 >
                   <div className={`w-12 h-12 rounded-lg ${method.color} flex items-center justify-center text-white font-bold text-xs shadow-inner transition-transform group-hover:scale-105`}>
                     {/* You can replace these with actual SVG logos later */}
@@ -79,10 +79,10 @@ function MakePayment({ isOpen, onClose, data }: MakePaymentProps) {
                   </div>
                   
                   <div className="ml-4 text-left">
-                    <p className="font-bold text-slate-800 tracking-tight leading-none uppercase">
+                    <p className="font-bold text-slate-800 dark:text-slate-200 tracking-tight leading-none uppercase">
                       {method.name}
                     </p>
-                    <p className="text-xs text-slate-500 mt-1">Instant mobile transfer</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-300 mt-1">Instant mobile transfer</p>
                   </div>
 
                   {selectedMethod === method.id && (
@@ -95,7 +95,7 @@ function MakePayment({ isOpen, onClose, data }: MakePaymentProps) {
         </div>
 
         {/* Action Footer */}
-        <div className="p-6 bg-slate-50 border-t flex items-center justify-between">
+        <div className="p-6 bg-slate-50 dark:bg-slate-700 border-t flex items-center justify-between">
             <span className="text-xs text-slate-400 flex items-center gap-1">
                 <CreditCard className="w-3 h-3" /> Encrypted
             </span>
@@ -105,7 +105,7 @@ function MakePayment({ isOpen, onClose, data }: MakePaymentProps) {
                 </Button>
                 <Button 
                     disabled={!selectedMethod}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-8 shadow-lg shadow-blue-200"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-8 shadow-lg shadow-blue-200 dark:shadow-slate-600"
                     onClick={()=>setIsOpenCheckout(!isOpenCheckout)}
                 >
                     Pay Now <ArrowRight className="ml-2 w-4 h-4" />

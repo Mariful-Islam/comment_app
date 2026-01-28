@@ -149,7 +149,7 @@ function CreateKeywordByUser({
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
       </DialogHeader>
-      <DialogContent className="z-70 max-h-screen overflow-y-auto">
+      <DialogContent className="z-70 max-h-screen overflow-y-auto dark:bg-slate-700">
         <h1 className="text-2xl font-bold mb-4 z-auto">Create Keyword</h1>
 
         <form onSubmit={handleSubmit}>

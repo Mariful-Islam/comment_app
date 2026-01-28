@@ -100,9 +100,7 @@ function KeywordUsage() {
           className="flex items-center justify-between gap-2 mb-4"
           onClick={() => router.back()}
         >
-          {/* <span className="px-2 py-1 hover:bg-gray-200 rounded-lg duration-150">
-            <ArrowLeft className="h-5 w-5 " />
-          </span> */}
+
           <h1 className="text-xl font-bold">Keyword Usage</h1>
 
           <Button
@@ -131,6 +129,7 @@ function KeywordUsage() {
             columns={columns}
             data={KeywordUsages?.data || []}
             searchColumn={""}
+            
           />
         )}
 
