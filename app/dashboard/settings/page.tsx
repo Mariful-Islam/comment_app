@@ -1,5 +1,7 @@
+"use client";
+
+import { withAuth } from '@/hoc/withAuth'
 import Layout from '@/layout/Layout'
-import React from 'react'
 
 function Settings() {
   return (
@@ -7,4 +9,4 @@ function Settings() {
   )
 }
 
-export default Settings
+export default withAuth(Settings);

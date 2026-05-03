@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 export async function GET(req: NextRequest) {
   const cookieStore = cookies();
   const instaAccessToken = (await cookieStore).get("insta_access_token")?.value;
-  console.log("Insta Access Token:", instaAccessToken);
 
   const res = await fetch(
     `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=${instaAccessToken}`,

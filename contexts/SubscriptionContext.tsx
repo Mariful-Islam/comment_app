@@ -27,7 +27,7 @@ export const SubscriptionProvider = ({ children }: Props) => {
   const fetchSubscriptions = async (page?:number) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/subscriptions?page=${page || 1}`, {credentials: 'include',});
+      const res = await fetch(`/api/subscriptions?page=${page || 1}`, {credentials: 'include', cache: 'no-cache'});
 
       const data = await res.json();
 

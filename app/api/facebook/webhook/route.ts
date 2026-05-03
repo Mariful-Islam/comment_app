@@ -30,15 +30,12 @@ export async function POST(request: NextRequest) {
   let pageAccessToken = null
 
   try {
-    const cookieStore = await cookies();
-    const userId = cookieStore.get("userId")?.value;
 
     await connectToDB();
 
-    const user = await User.findOne({ _id: userId });
-
-    if (new Date(user.isFreeTrial.facebook.endDate) <= new Date()) {
       const body = await request.json();
+      const now = new Date();
+
       console.log("📬 Webhook event:");
 
       for (const entry of body.entry ?? []) {
@@ -46,6 +43,40 @@ export async function POST(request: NextRequest) {
 
         // 🔑 Get Page Access Token from DB
         const pageRecord = await FacebookPage.findOne({ id: pageId });
+
+        console.log(pageRecord, "pahesdcds")
+
+        const userId = pageRecord?.userId;
+
+        
+        console.log(`🔍 Processing page ${pageId} for user ${userId}`);
+
+        const user = await User.findOne({ _id: userId });
+
+
+        if (!user) {
+          console.warn(`⚠️ No user found for page ${pageId}`);
+          continue;
+        }
+
+        // 2. Subscription & Trial Validation Logic
+        const hasValidTrial = 
+          user.isFreeTrial?.facebook?.startDate <= now && 
+          user.isFreeTrial?.facebook?.endDate >= now;
+
+        const activeSubscription = user.subscriptions?.facebook?.find((sub: any) => 
+          sub.page.id == pageId && 
+          sub.status === "running" && 
+          sub.endDate >= now
+        );
+
+        // If neither is valid, skip processing replies
+        if (!hasValidTrial && !activeSubscription) {
+          
+          console.log(`🚫 Service suspended: No active subscription or trial for user ${user.email} on page ${pageId}`);
+          continue; 
+        }
+
 
         if (!pageRecord) {
           console.warn(`⚠️ No page token stored for page ${pageId}`);
@@ -60,19 +91,15 @@ export async function POST(request: NextRequest) {
             change.value?.item === "comment" &&
             change.value?.from?.id !== pageId
           ) {
-            const { comment_id, post_id, message, sender_id, from } =
-              change.value;
+            const { comment_id, post_id, message, sender_id, from } = change.value;
 
             console.log(
               `New comment on post ${post_id}: ${message} (Comment ID: ${comment_id})`
             );
 
-            const words = message
-              .trim()
-              .split(/\s+/)
-              .map((w: any) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")); // escape regex chars
+            const words = message?.trim()?.split(/\s+/).map((w: any) => w?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")); // escape regex chars
 
-            const regex = new RegExp(`\\b(${words.join("|")})\\b`, "i");
+            const regex = new RegExp(`\\b(${words?.join("|")})\\b`, "i");
 
             const keywordEntry = await Keyword.findOne({
               "post.id": post_id,
@@ -117,6 +144,8 @@ export async function POST(request: NextRequest) {
             ) {
               await new Promise((r) => setTimeout(r, 15000)); // slight delay to ensure comment is posted before replying
 
+ 
+
               const commentRes = await fetch(
                 `https://graph.facebook.com/v23.0/${comment_id}/comments?access_token=${pageAccessToken}`,
                 {
@@ -128,8 +157,14 @@ export async function POST(request: NextRequest) {
                 }
               );
 
+              const data = await commentRes.json(); // Capture the actual response
+
               if (commentRes.ok) {
-                console.log("💬 Comment reply sent");
+                console.log("💬 Comment reply sent:", data.id);
+              } else {
+                console.error("❌ Failed to send reply:", data.error.message);
+                console.error("Error Code:", data.error.code);
+                console.error("Error Subcode:", data.error.error_subcode);
               }
 
               await new Promise((r) => setTimeout(r, 30000));
@@ -177,23 +212,6 @@ export async function POST(request: NextRequest) {
           }
         }
       }
-    } else {
-      const response = await fetch(
-        `https://graph.facebook.com/v23.0/me/subscribed_apps`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            access_token: pageAccessToken,
-            subscribed_fields: ["feed"],
-          }),
-        }
-      );
-
-      const data = await response.json();
-    }
 
     return NextResponse.json({ status: "EVENT_RECEIVED" });
   } catch (error) {

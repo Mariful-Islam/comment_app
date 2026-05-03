@@ -30,6 +30,7 @@ export const FacebookProvider = ({ children }: Props) => {
             `https://graph.facebook.com/v21.0/me?fields=id,name,email,picture.width(200).height(200)&access_token=${session.fb_access_token}`
           );
           const userData: FacebookUser = await userRes.json();
+          console.log("Fetched Facebook user data:", userData);
           setUser(userData);
         }
       } catch (error) {

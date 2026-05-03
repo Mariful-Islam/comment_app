@@ -72,9 +72,10 @@ export default function AnalyticsDashboard() {
   }, []);
 
   const pieData = [
-    { name: "Instagram", value: data ? data.instagram : 550 },
-    { name: "Facebook", value: data ? data.facebook : 300 },
+    { name: "Instagram", value: data ? data?.automationUsage?.instagram : 550 },
+    { name: "Facebook", value: data ? data?.automationUsage?.facebook : 300 },
   ];
+
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-gray-800 rounded-xl p-4 md:p-8">
@@ -101,21 +102,24 @@ export default function AnalyticsDashboard() {
 
         {/* --- STAT CARDS --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard
-            title="Total Revenue"
-            value="৳1,25,430"
-            growth="+12.5%"
-            icon={TrendingUp}
-            color="blue"
-          />
+
           <StatCard
             title="Active Automations"
-            value={data ? data.total : "..."}
+            value={data ? data?.activeAutomations : "..."}
             growth="-8.2%"
             icon={ZapIcon}
             color="blue"
           />
+          
           <StatCard
+            title="Automation Usage"
+            value={data ? data?.automationUsage?.total: "..."}
+            growth="+12.5%"
+            icon={TrendingUp}
+            color="blue"
+          />
+
+          {/* <StatCard
             title="New Leads"
             value="1,204"
             growth="+24%"
@@ -128,7 +132,7 @@ export default function AnalyticsDashboard() {
             growth="+4.3%"
             icon={MousePointer2}
             color="blue"
-          />
+          /> */}
         </div>
 
         {/* --- CHARTS SECTION --- */}
@@ -218,13 +222,13 @@ export default function AnalyticsDashboard() {
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-500 dark:text-slate-100 font-bold">Instagram</span>
                 <span className="text-slate-900 dark:text-slate-100 font-black">
-                  {((data?.instagram / data?.total) * 100).toFixed(2)}%
+                  {((data?.automationUsage?.instagram / data?.automationUsage?.total) * 100).toFixed(2)}%
                 </span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-500 dark:text-slate-100 font-bold">Facebook</span>
                 <span className="text-slate-900 dark:text-slate-100 font-black">
-                  {((data?.facebook / data?.total) * 100).toFixed(2)}%
+                  {((data?.automationUsage?.facebook / data?.automationUsage?.total) * 100).toFixed(2)}%
                 </span>
               </div>
             </div>

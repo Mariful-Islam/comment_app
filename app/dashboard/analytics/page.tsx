@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import Layout from "@/layout/Layout";
 import moment from "moment";
+import { withAuth } from "@/hoc/withAuth";
+import { useKeywordUsage } from "@/contexts/KeywordUsageContext";
 
 // Mock Data
 const revenueData = [
@@ -42,8 +44,10 @@ const revenueData = [
 
 const COLORS = ["#2563eb", "#60a5fa"];
 
-export default function AnalyticsDashboard() {
+function AnalyticsDashboard() {
   const [data, setData] = useState<any>(null);
+  const { KeywordUsages, fetchKeywordUsages, loading } = useKeywordUsage();
+  
 
   const today = moment(new Date()).format("YYYY-MM-DD");
   const weekDaysAgo = moment(
@@ -80,6 +84,8 @@ export default function AnalyticsDashboard() {
     ];
 
 
+    console.log(KeywordUsages, "keyword usages in analytics")
+
   return (
     <Layout>
       <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
@@ -106,13 +112,7 @@ export default function AnalyticsDashboard() {
 
           {/* --- STAT CARDS --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard
-              title="Total Revenue"
-              value="৳1,25,430"
-              growth="+12.5%"
-              icon={TrendingUp}
-              color="blue"
-            />
+            
             <StatCard
               title="Active Automations"
               value={data ? data.total : '...'}
@@ -120,6 +120,15 @@ export default function AnalyticsDashboard() {
               icon={ZapIcon}
               color="blue"
             />
+
+            <StatCard
+              title="Total Revenue"
+              value={KeywordUsages ? KeywordUsages.length : '...'}
+              growth="+12.5%"
+              icon={TrendingUp}
+              color="blue"
+            />
+
             <StatCard
               title="New Leads"
               value="1,204"
@@ -294,3 +303,7 @@ function ZapIcon(props: any) {
     </svg>
   );
 }
+
+
+
+export default withAuth(AnalyticsDashboard);

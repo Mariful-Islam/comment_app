@@ -12,6 +12,40 @@ type UserType = {
   createdAt: string;
   authProvider?: string;
   isFreeTrial?: any;
+  subscriptions?: {
+    facebook?: {
+      page: {
+        id: number;
+        name: string;
+      };
+      startDate: string;
+      endDate: string;
+      status: string;
+      isPaid: boolean;
+      payment: {    
+        method: string;
+        trxId: string;
+        amount: number;
+        paidAt: string;
+      };
+    }[];
+    instagram?: {
+      user: {
+        id: number;
+        username: string;
+      };
+      startDate: string;
+      endDate: string;
+      status: string;
+      isPaid: boolean;
+      payment: {    
+        method: string;   
+        trxId: string;  
+        amount: number;
+        paidAt: string;
+      };
+    }[];
+  };
 };
 
 type UserContextType = {
@@ -70,6 +104,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       fetchUser();
     }
   }, [pathname]);
+
+
+
 
   return (
     <UserContext.Provider value={{ user, setUser, loading, fetchUser }}>

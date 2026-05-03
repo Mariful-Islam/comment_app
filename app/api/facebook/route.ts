@@ -1,7 +1,9 @@
+import { useUser } from "@/contexts/UserContext";
 import { connectToDB } from "@/lib/mongodb";
 import { Facebook } from "@/models/Facebook";
 import { FacebookPage } from "@/models/FacebookPage";
 import { NextRequest, NextResponse } from "next/server";
+
 
 
 export async function GET(req: NextRequest){
@@ -76,6 +78,7 @@ export async function POST(req: NextRequest) {
     });
 
     // ✅ Fetch Facebook Pages
+    const user = useUser();
     const pagesRes = await fetch(
       `https://graph.facebook.com/v23.0/me/accounts?access_token=${accessToken}`
     );
@@ -91,6 +94,7 @@ export async function POST(req: NextRequest) {
             pageAccessToken: page.access_token,
             name: page.name,
             ownerId: facebookAuth._id,
+            userId: user.user?._id,
             ownerAccessToken: accessToken,
             ownerName: name,
           },

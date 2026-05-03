@@ -39,10 +39,10 @@ export const InstagramPostProvider = ({ children }: Props) => {
       if (data?.data) {
         setPosts(data.data);
       } else {
-        console.error("Error in response:", data);
+        console.log("Error in response:", data);
       }
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.log("Error fetching posts:", error);
     } finally {
       setLoading(false);
     }

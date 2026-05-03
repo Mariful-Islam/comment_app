@@ -141,7 +141,6 @@ function CreateKeywordByUser({
   }, [form?.platform.length]);
 
 
-  console.log("form", form);
 
   return (
     <Dialog open={isOpen} onOpenChange={onclose}>

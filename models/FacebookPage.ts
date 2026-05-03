@@ -5,6 +5,7 @@ interface IFacebookPage extends Document {
     pageAccessToken: string;
     name: string;
     ownerId: string;
+    userId: string;
     ownerAccessToken: string;
     ownerName: string;
 }
@@ -14,6 +15,7 @@ const FacebookPageSchema = new Schema<IFacebookPage>({
     pageAccessToken: { type: String, required: true },
     name: { type: String, required: true },
     ownerId: { type: String, required: true },
+    userId: { type: String, required: true },
     ownerAccessToken: { type: String, required: true },
     ownerName: { type: String, required: true },
 }, {

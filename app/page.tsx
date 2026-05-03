@@ -28,26 +28,113 @@ import {
   Calendar,
   Users
 } from "lucide-react";
-import FeatureSection from "@/components/FeatureSection";
-import Con from "@/components/Con";
-import InstagramInfoCard from "@/components/InstagramSection";
-import { useInstagram } from "@/contexts/InstagramContext";
+// import { useInstagram } from "@/contexts/InstagramContext";
 import AnalyticsDashboard from "@/components/Analytics";
+import { useFacebookPages } from "@/contexts/FacebookPageContext";
+import { useFacebook } from "@/contexts/FacebookContext";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
+
 
 
 function Home() {
   const router = useRouter();
   const { user, loading } = useUser();
-  const {user: instaUser} = useInstagram()
+  // const {user: instaUser} = useInstagram()
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+  
+  const { pages } = useFacebookPages();
+  const {user: fbUser} = useFacebook();
+  const [isSyncLoading, setIsSyncLoading] = useState(false);
 
-  const handleLogout = async () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    await signOut(auth);
-    router.refresh();
-    router.replace("/login");
-  };
+
+
+
+  const handleSync = async () => {
+    setIsSyncLoading(true);
+
+    const fbAccessToken = document.cookie.split("; ").find(row => row.startsWith("fb_access_token="))?.split("=")[1];
+
+    try {
+      const res = await fetch("/api/facebook/pages")
+      const data = await res.json();
+
+      console.log("Fetched pages:", data, "graph fb pages", pages);
+
+      if(data?.data?.length === 0) {
+        const syncPromises = pages?.data?.map((page: any) => {
+          console.log("Syncing page:", page);
+        
+          return fetch(`/api/facebook/pages/create`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: page?.name,
+              id: page?.id,
+              pageAccessToken: page?.access_token,
+              ownerId: fbUser?.fbId || "unknown_owner",
+              userId: user?._id,
+              ownerAccessToken: fbAccessToken,
+              ownerName: fbUser?.name || "Unknown User"
+            }),
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("Page sync response:", data);
+          })
+          .catch((err) => {
+            console.error("Error syncing page:", err);
+          });
+        }) || [];
+
+        await Promise.all(syncPromises);
+      } else if (data?.data?.length > 0){
+        // if all pages not exist in DB, sync them
+        const existingPageIds = data.data.map((page: any) => page.id);
+        const pagesToSync = pages?.data?.filter((page: any) => !existingPageIds.includes(page.id)) || [];
+
+        if(pagesToSync.length > 0){
+          const syncPromises = pagesToSync.map((page: any) => {
+            console.log("Syncing page:", page); 
+
+            return fetch(`/api/facebook/pages/create`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                name: page?.name,
+                id: page?.id,
+                pageAccessToken: page?.access_token,
+                ownerId: fbUser?.fbId || "unknown_owner",
+                userId: user?._id,
+                ownerAccessToken: fbAccessToken,
+                ownerName: fbUser?.name || "Unknown User"
+              }),
+            })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log("Page sync response:", data);
+            })
+            .catch((err) => {
+              console.error("Error syncing page:", err);
+            });
+          });
+
+          await Promise.all(syncPromises);
+        }
+      } else {
+        console.log("Pages already exist in DB, skipping sync.");
+      }
+
+    } catch (error) {
+      console.error("Failed to sync pages:", error);
+    } finally {
+      setIsSyncLoading(false);
+    }
+  }
+
 
   if (loading) {
     return (
@@ -75,6 +162,8 @@ function Home() {
           <InstagramInfoCard instaUser={instaUser}/>
         </div> */}
         
+        <Button variant={`outline`} onClick={handleSync}>Sync {isSyncLoading && <Spinner variant={`circle`} />}</Button>
+
 
 
         {/* --- SECTION 4: ACCOUNT STATUS --- */}

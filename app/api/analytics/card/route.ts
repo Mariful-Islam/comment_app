@@ -59,13 +59,17 @@ export async function GET(request: NextRequest) {
     //   }
     // }
 
-    console.log("Final Match Query:", JSON.stringify(matchQuery, null, 2));
 
     /**
      * 3. EXECUTE AGGREGATION
      */
     // Inside your GET handler
-    const stats = await KeywordUsage.aggregate([
+
+    const activeAutomations = await Keyword.countDocuments({ userId: userId })
+    
+
+
+    const keywordUsages = await KeywordUsage.aggregate([
       { $match: matchQuery },
       {
         $group: {
@@ -77,15 +81,20 @@ export async function GET(request: NextRequest) {
 
     // Final formatted data
     const result = {
-      facebook: 0,
-      instagram: 0,
-      total: 0,
+      activeAutomations: activeAutomations,
+      automationUsage: {
+        facebook: 0,
+        instagram: 0,
+        total: 0,
+      }
+      
+
     };
 
-    stats.forEach((item) => {
+    keywordUsages.forEach((item) => {
       if (item._id === "facebook" || item._id === "instagram") {
-        result[item._id as "facebook" | "instagram"] = item.totalCount;
-        result.total += item.totalCount;
+        result.automationUsage[item._id as "facebook" | "instagram"] = item.totalCount;
+        result.automationUsage.total += item.totalCount;
       }
     });
 

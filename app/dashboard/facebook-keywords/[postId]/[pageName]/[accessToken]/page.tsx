@@ -18,6 +18,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import EditKeywordForm from "./components/EditKeywordForm";
 import DeleteKeyword from "./components/DeleteKeyword";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import { withAuth } from "@/hoc/withAuth";
 
 function CommentKeyword() {
   const { postId, pageName, accessToken }: any = useParams();
@@ -179,4 +180,4 @@ function CommentKeyword() {
   );
 }
 
-export default CommentKeyword;
+export default withAuth(CommentKeyword);

@@ -2,6 +2,7 @@
 import { useFacebook } from "@/contexts/FacebookContext";
 import { useInstagram } from "@/contexts/InstagramContext";
 import { useUser } from "@/contexts/UserContext";
+import { withAuth } from "@/hoc/withAuth";
 import Layout from "@/layout/Layout";
 import moment from "moment";
 import Image from "next/image";
@@ -101,4 +102,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default withAuth(Profile);

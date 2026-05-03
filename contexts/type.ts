@@ -3,6 +3,8 @@ export interface FacebookUser {
   id: string;
   name: string;
   email?: string;
+  fbId?: string;
+  accessToken?: string;
   picture?: {
     data: {
       url: string;

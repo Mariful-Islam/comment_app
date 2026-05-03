@@ -23,6 +23,7 @@ import { useKeywordUsage } from "@/contexts/KeywordUsageContext";
 import KeywordDetailView from "./components/KeywordDetailView";
 import { ReusablePagination } from "@/components/Pagination";
 import moment from "moment";
+import { withAuth } from "@/hoc/withAuth";
 
 function KeywordUsage() {
   const { user } = useUser();
@@ -155,4 +156,4 @@ function KeywordUsage() {
   );
 }
 
-export default KeywordUsage;
+export default withAuth(KeywordUsage);

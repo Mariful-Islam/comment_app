@@ -58,8 +58,10 @@ export default function RootLayout({
 }>) {
   const [hasNotification, setHasNotification] = useState(false);
 
+  
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex gap-0 w-full text-black dark:text-white`}
       >

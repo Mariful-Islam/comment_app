@@ -59,7 +59,7 @@ export const InstagramProvider = ({ children }: Props) => {
   const checkSubscription = async () => {
     try {
       setIsLoading(true)
-      const res = await fetch(`/api/instagram/subscription`)
+      const res = await fetch(`/api/instagram/free-trial`)
       const data = await res.json()
 
       console.log(data?.data?.isSubscribed, "llllllll")

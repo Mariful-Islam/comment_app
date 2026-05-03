@@ -15,6 +15,7 @@ import SubscriptionDetailView from "./components/SubscriptionDetailView";
 import { useInstagram } from "@/contexts/InstagramContext";
 import { useFacebookPages } from "@/contexts/FacebookPageContext";
 import UpgradePlan from "./components/UpgradePlan";
+import { withAuth } from "@/hoc/withAuth";
 
 function Package() {
   const [platform, setPlatform] = useState<"facebook" | "instagram" | null>(null);
@@ -58,7 +59,27 @@ function Package() {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }: any) => {
-        const status = row?.original?.status;
+        const data = row?.original;
+        const now = new Date();
+        const startDate = new Date(data?.startDate);
+        const endDate = new Date(data?.endDate);
+        
+
+        // 1. Determine the logical state
+        let status = "expired"; 
+
+        console.log(endDate)
+
+        if (data?.isPaid) {
+          if (now > endDate) {
+            status = "expired";
+          } else if (data?.isPaid && now <= endDate) {
+            status = "running";
+          } 
+        } else if (now <= endDate) {
+          status = "pending"; // Paid but hasn't started yet
+        }
+ 
         const statusStyles: any = {
           pending: "text-yellow-500 dark:text-yellow-100 bg-yellow-100 dark:bg-yellow-800",
           running: "text-green-500 dark:text-green-100 bg-green-100 dark:bg-green-800",
@@ -188,4 +209,4 @@ function Package() {
   );
 }
 
-export default Package;
+export default withAuth(Package);

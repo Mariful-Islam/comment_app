@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
+    maxAge: 60 * 60 * 24 * 365, // 1 year
     
   });
   // You could also store page info if needed

@@ -9,6 +9,7 @@ import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useFacebook } from "@/contexts/FacebookContext";
 import { toast } from "sonner";
+import { withAuth } from "@/hoc/withAuth";
 
 function Pages() {
   const [pages, setPages] = useState<any[]>([]);
@@ -334,4 +335,4 @@ function Pages() {
   );
 }
 
-export default Pages;
+export default withAuth(Pages);

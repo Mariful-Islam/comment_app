@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import moment from "moment";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import { withAuth } from "@/hoc/withAuth";
 
 function Comment() {
   const { id } = useParams();
@@ -127,4 +128,4 @@ function Comment() {
   );
 }
 
-export default Comment;
+export default withAuth(Comment);

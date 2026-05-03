@@ -8,6 +8,7 @@ import { Spinner } from "./ui/shadcn-io/spinner";
 import { useUser } from "@/contexts/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { RefreshCw } from "lucide-react";
 
 function InstagramInfo() {
   const router = useRouter()
@@ -19,7 +20,7 @@ function InstagramInfo() {
   };
 
   const { user: instaUser, token, isSubscribed, checkSubscription, isLoading } = useInstagram();
-  const { user } = useUser();
+  const { user, fetchUser } = useUser();
 
 
   const handleInstaDisconnect = () => {
@@ -69,7 +70,7 @@ function InstagramInfo() {
 
 
   const stopAutomation = async (e?:any) => {
-    e.preventDefault()
+    e?.preventDefault()
     // e.stopPropagation()
 
     try {
@@ -84,8 +85,7 @@ function InstagramInfo() {
   }
 
   const startAutomation = async (e:any) => {
-    e.preventDefault()
-    // e.stopPropagation()
+    e?.preventDefault()
     
     try {
       const res = await fetch(`/api/instagram/free-trial`, {method: "POST"})
@@ -125,43 +125,79 @@ function InstagramInfo() {
     checkFreeTrial()
   }, [router, user])
 
+  const [loading, setLoading] = useState(false)
 
   return (
     <div>
       {instaUser ? (
         <div className="">
-          <h1 className="text-lg font-semibold">Instagram Info</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-semibold">Instagram</h1>
 
-          <div className="my-4 text-base">
-            <div>
-              {/* <img
-                src={user?.picture?.data?.url}
-                alt=""
-                className="h-16 w-16 rounded-full"
-              /> */}
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                fetchUser()
+              }}
+              disabled={loading}
+            >
+              <RefreshCw
+                className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+              />
+              
+            </Button>
+            
+          </div>
 
-            <div className="flex gap-4 mt-4">
-              {/* <div className="text-gray-500 ">Name</div> */}
-              <div>{instaUser?.username}</div>
-            </div>
+          <div className="flex gap-3 items-center mt-6">
+              <div className="h-16 w-16 rounded-full bg-gray-500 "></div>
+              <div> {instaUser.username}</div>
+          </div>
 
-            <div className="text-sm text-gray-700 mt-4">**Free Trial for 7 days </div>
-
-            <div className="mt-4">
-              { isFreeTrialInstagram ?
-                  isSubscribed ? (
-                    <Button onClick={stopAutomation} variant={`destructive`}>{!isLoading ? "Stop Automation" : <Spinner variant={`circle`}/>  }</Button>
-                  ) : (
-                    <Button onClick={startAutomation} variant={`outline`} >{!isLoading ? "Start Automation" : <Spinner variant={`circle`}/>  }</Button>
-                  )
-                : (
-                  <div className="text-sm text-red-400 ">
-                    Your free trial is expired please choose a plan... <Link href={`/dashboard/package`} className="text-red-500 underline hover:no-underline">plan</Link>
+          <div className="mt-4">
+            {isFreeTrialInstagram ? (
+              /* --- SCENARIO 1: FREE TRIAL IS AVAILABLE --- */
+              <div className="space-y-2">
+                <p className="text-xs text-blue-600 font-medium italic">Free Trial Active</p>
+                {isSubscribed ? (
+                  <Button onClick={stopAutomation} variant="destructive" disabled={isLoading}>
+                    {!isLoading ? "Stop Free Automation" : <Spinner variant="circle" />}
+                  </Button>
+                ) : (
+                  <Button onClick={startAutomation} variant="outline" disabled={isLoading}>
+                    {!isLoading ? "Start Free Automation" : <Spinner variant="circle" />}
+                  </Button>
+                )}
+              </div>
+            ) : (
+              /* --- SCENARIO 2: FREE TRIAL EXPIRED -> CHECK PAID SUBSCRIPTIONS --- */
+              <>
+                {/* Look for a running Instagram subscription */}
+                {user?.subscriptions?.instagram?.some((sub) => sub.status === "running") ? (
+                  <div className="p-3 bg-green-50 border border-green-100 rounded-lg">
+                    <div className="text-sm text-green-600 font-bold">
+                      <span className="text-gray-700 font-normal">Active Plan:</span>{" "}
+                      {user.subscriptions.instagram.find((s) => s.status === "running")?.user.username}
+                    </div>
+                    <p className="text-xs text-green-500 mt-1">Automation is running via your paid plan.</p>
                   </div>
-              )
-              }
-            </div>
+                ) : (
+                  /* --- SCENARIO 3: NO TRIAL & NO SUBSCRIPTION --- */
+                  <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
+                    <p className="text-sm text-red-500 font-medium">
+                      Your free trial has expired and no active plan was found.
+                    </p>
+                    <Link 
+                      href="/dashboard/package" 
+                      className="text-sm text-red-600 font-bold underline hover:no-underline mt-2 inline-block"
+                    >
+                      View Pricing Plans →
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-12">

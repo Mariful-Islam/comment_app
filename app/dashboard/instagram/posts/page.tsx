@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { useInstagram } from "@/contexts/InstagramContext";
 import { useInstagramPost } from "@/contexts/InstagramPostContext";
+import { withAuth } from "@/hoc/withAuth";
 import Layout from "@/layout/Layout";
 import { ArrowLeft, RefreshCw } from "lucide-react";
 import { set } from "mongoose";
@@ -110,4 +111,4 @@ function Posts() {
   );
 }
 
-export default Posts;
+export default withAuth(Posts);

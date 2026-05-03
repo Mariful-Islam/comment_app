@@ -37,6 +37,8 @@ export const FacebookPageProvider = ({ children }: Props) => {
           `https://graph.facebook.com/v23.0/me/accounts?access_token=${session.fb_access_token}`
         );
         const pageData: any = await pageRes.json();
+
+        
         setPages(pageData);
       }
     } catch (error) {

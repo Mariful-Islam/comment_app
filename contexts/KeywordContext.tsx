@@ -49,10 +49,10 @@ export const KeywordProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    if (!keywords && user) {
+    if (!keywords && user?._id) {
       fetchKeywords();
     }
-  }, [user, keywords]);
+  }, [user?._id, keywords]);
 
   return (
     <KeywordContext.Provider value={{ keywords, fetchKeywords, loading }}>

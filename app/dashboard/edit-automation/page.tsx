@@ -44,6 +44,7 @@ import KeywordDetailView from "./components/KeywordDetailView";
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
 import { ReusablePagination } from "@/components/Pagination";
 import { Checkbox } from "@/components/ui/checkbox";
+import { withAuth } from "@/hoc/withAuth";
 
 function CommentKeyword() {
   const { user } = useUser();
@@ -266,4 +267,4 @@ function CommentKeyword() {
   );
 }
 
-export default CommentKeyword;
+export default withAuth(CommentKeyword);
