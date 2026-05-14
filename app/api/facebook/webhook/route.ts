@@ -1,4 +1,4 @@
-import Token from "@/components/Token";
+
 import { connectToDB } from "@/lib/mongodb";
 import { Facebook } from "@/models/Facebook";
 import { FacebookPage } from "@/models/FacebookPage";
@@ -44,8 +44,6 @@ export async function POST(request: NextRequest) {
         // 🔑 Get Page Access Token from DB
         const pageRecord = await FacebookPage.findOne({ id: pageId });
 
-        console.log(pageRecord, "pahesdcds")
-
         const userId = pageRecord?.userId;
 
         
@@ -58,6 +56,10 @@ export async function POST(request: NextRequest) {
           console.warn(`⚠️ No user found for page ${pageId}`);
           continue;
         }
+
+
+        // Get all facebook pages for the user to check subscription/trial status
+        const pages = await FacebookPage.find({ userId: userId });  
 
         // 2. Subscription & Trial Validation Logic
         const hasValidTrial = 
@@ -85,6 +87,8 @@ export async function POST(request: NextRequest) {
 
         pageAccessToken = pageRecord.pageAccessToken;
 
+
+
         for (const change of entry.changes ?? []) {
           if (
             change.field === "feed" &&
@@ -93,9 +97,13 @@ export async function POST(request: NextRequest) {
           ) {
             const { comment_id, post_id, message, sender_id, from } = change.value;
 
-            console.log(
-              `New comment on post ${post_id}: ${message} (Comment ID: ${comment_id})`
-            );
+            console.log("Received comment event:", { comment_id, post_id, message, sender_id, from });
+
+            console.log(pages, "pages data from context")
+
+
+
+
 
             const words = message?.trim()?.split(/\s+/).map((w: any) => w?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")); // escape regex chars
 
@@ -106,7 +114,6 @@ export async function POST(request: NextRequest) {
               keyword: { $regex: regex },
             });
 
-            console.log("Matched Keyword Entry:", keywordEntry);
 
             let replyComment = "Thanks for reaching out!";
             let replyMessage = "Thank you for your comment!";

@@ -137,61 +137,7 @@ export default function AnalyticsDashboard() {
 
         {/* --- CHARTS SECTION --- */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 ">
-          {/* Main Growth Chart */}
-          <div className="lg:col-span-2 bg-white border border-slate-100 dark:border-slate-400 p-6 rounded-4xl shadow-sm dark:bg-slate-600">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="font-black text-slate-800 dark:text-slate-100 text-lg">
-                Revenue Growth
-              </h3>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-blue-600 rounded-full" />
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-100 uppercase tracking-wider">
-                  This Year
-                </span>
-              </div>
-            </div>
-            <div className="h-75 w-full">
-              <ResponsiveContainer width="100%" height="100%" className="">
-                <AreaChart data={revenueData}>
-                  <defs>
-                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
-                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#f1f5f9"
-                  />
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#94a3b8", fontSize: 12 }}
-                    dy={10}
-                  />
-                  <YAxis hide />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: "16px",
-                      border: "none",
-                      boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#2563eb"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorValue)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
+          
           {/* Goal Completion (Circular) */}
           <div className="bg-white dark:bg-slate-600 border border-slate-100 dark:border-slate-400 p-6 rounded-4xl shadow-sm flex flex-col items-center justify-center text-center">
             <h3 className="font-black text-slate-800 dark:text-slate-100 text-lg mb-6 w-full text-left">

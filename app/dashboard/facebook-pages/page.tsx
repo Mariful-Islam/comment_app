@@ -113,14 +113,45 @@ function Pages() {
       const checkTrialPageRes = await fetch(`/api/facebook/free-trial-page?page_id=${page?.id}`);
       const checkTrialPageData = await checkTrialPageRes.json();
 
-      console.log(checkTrialPageRes, checkTrialPageData)
+      const activeScriptionsRes = await fetch(`/api/facebook/subscriptions`);
+      const activeSubscriptionsData = await activeScriptionsRes.json();
 
-      if (checkTrialPageData?.freeTrialFacebook?.status === "expired") {
+
+      console.log("Check trial page data:", typeof page.id, activeSubscriptionsData);
+
+      // Check if the current page has an active subscription
+      const ac = activeSubscriptionsData?.subscriptions?.find((sub:any) => ((sub?.page?.id.toString() === page?.id) && (sub?.status === "running") && (sub?.isPaid === true)));
+
+      console.log("Active subscription for this page:", ac);
+
+
+
+      if (checkTrialPageData?.freeTrialFacebook?.status === "expired" && ac === false) {
         toast.error("Free trial is expired!");
-
       } 
+
+      if(checkTrialPageData?.freeTrialFacebook?.status === "  " && ac === false){
+        toast.error("No subscription found for this page !")
+      }
+
+
+      if(checkTrialPageData?.freeTrialFacebook?.status === "assigned" && ac === false){
+        toast.error("Already assigned a page for free trial !")  
+      }
+
+
+      if(checkTrialPageData?.freeTrialFacebook?.status === "running" && ac === false){
+        toast.error("Free trial is already running for this page !")  
+      }
+
+
+
         
-      if (checkTrialPageData?.freeTrialFacebook?.status === "running" && checkTrialPageData?.freeTrialFacebook?.page?.id === page.id) {
+      if ((checkTrialPageData?.freeTrialFacebook?.status === "running" && checkTrialPageData?.freeTrialFacebook?.page?.id === page.id) || (ac?.page?.id.toString() === page?.id)) {
+
+        console.log(",,,,,,,,,,,,,,,,,,,,,,,")
+
+
         const response = await fetch(
           `https://graph.facebook.com/v23.0/me/subscribed_apps`,
           {
@@ -150,10 +181,7 @@ function Pages() {
 
       }
 
-      if(checkTrialPageData?.freeTrialFacebook?.status === "assigned"){
-        toast.error("Already assigned a page for free trial !")
-        
-      }
+      
       
       if(checkTrialPageData?.freeTrialFacebook?.status === "pending"){
         const response = await fetch(

@@ -1,4 +1,5 @@
-// FacebookPageContext.tsx
+"use client";
+
 import {
   createContext,
   useContext,

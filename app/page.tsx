@@ -58,7 +58,6 @@ function Home() {
       const res = await fetch("/api/facebook/pages")
       const data = await res.json();
 
-      console.log("Fetched pages:", data, "graph fb pages", pages);
 
       if(data?.data?.length === 0) {
         const syncPromises = pages?.data?.map((page: any) => {
@@ -81,7 +80,7 @@ function Home() {
           })
           .then((res) => res.json())
           .then((data) => {
-            console.log("Page sync response:", data);
+            console.log("Page sync response:");
           })
           .catch((err) => {
             console.error("Error syncing page:", err);
@@ -96,7 +95,7 @@ function Home() {
 
         if(pagesToSync.length > 0){
           const syncPromises = pagesToSync.map((page: any) => {
-            console.log("Syncing page:", page); 
+         
 
             return fetch(`/api/facebook/pages/create`, {
               method: "POST",
@@ -115,7 +114,7 @@ function Home() {
             })
             .then((res) => res.json())
             .then((data) => {
-              console.log("Page sync response:", data);
+              console.log("Page sync response:");
             })
             .catch((err) => {
               console.error("Error syncing page:", err);
@@ -157,10 +156,7 @@ function Home() {
         
         <AnalyticsDashboard/>
 
-        {/* <div className="grid grid-cols-2 gap-6 w-full">
-          <Con/>
-          <InstagramInfoCard instaUser={instaUser}/>
-        </div> */}
+
         
         <Button variant={`outline`} onClick={handleSync}>Sync {isSyncLoading && <Spinner variant={`circle`} />}</Button>
 
