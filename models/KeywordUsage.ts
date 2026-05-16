@@ -4,6 +4,7 @@ import mongoose, { Schema, model, Document } from 'mongoose';
 interface IKeywordUsage extends Document {
     userId: string;
     postId: string;
+    commentId: string; // 💡 Crucial: Saved to block retries in our Idempotency Check above
     keyword: {
         id: string;
         text: string;
@@ -21,6 +22,7 @@ interface IKeywordUsage extends Document {
 const KeywordUsageSchema = new Schema<IKeywordUsage>({
     userId: { type: String, required: true },
     postId: { type: String, required: true },
+    commentId: { type: String, required: true, unique: true, index: true }, // 💡 Crucial: Saved to block retries in our Idempotency Check above
     keyword: {
         id: { type: String, required: true },
         text: { type: String, required: true }

@@ -19,6 +19,7 @@ function FacebookInfo() {
   useEffect(() => {
     if (user && token) {
       localStorage.setItem("facebookAccessToken", token);
+      
 
       fetch(`/api/facebook`, {
         method: "POST",

@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  allowedDevOrigins: ['5330-103-106-238-209.ngrok-free.app']
+  allowedDevOrigins: ['b1f1-103-106-238-209.ngrok-free.app']
 
   
 };
